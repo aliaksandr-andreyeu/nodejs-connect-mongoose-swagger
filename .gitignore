@@ -1,0 +1,8 @@
+.husky/
+.vscode/
+node_modules/
+build/
+*.LICENSE
+**/.DS_Store
+yarn.lock
+package-lock.json
