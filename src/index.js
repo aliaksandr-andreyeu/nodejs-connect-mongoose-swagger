@@ -6,8 +6,8 @@ import path from 'path';
 import http from 'http';
 import cluster from 'cluster';
 import dotenv from 'dotenv';
-import app from './app';
-import db from './db';
+import app from '@app';
+import db from '@db';
 
 const env = process.env || {};
 

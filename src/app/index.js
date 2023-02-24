@@ -5,6 +5,7 @@ import xss from 'xss-clean';
 import hpp from 'hpp';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
+import { bodyParser } from '@middlewares';
 
 const app = () => {
   const server = connect();
@@ -27,6 +28,8 @@ const app = () => {
   );
 
   server.use(cors());
+
+  server.use(bodyParser);
 
   return server;
 };
