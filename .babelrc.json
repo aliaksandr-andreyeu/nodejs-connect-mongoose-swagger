@@ -1,11 +1,17 @@
 {
   "presets": ["@babel/preset-env"],
-
   "plugins": [
     [
       "babel-plugin-module-resolver",
       {
-        "alias": {}
+        "root": ".",
+        "alias": {
+          "@app": "./src/app",
+          "@db": "./src/db",
+          "@constants": "./src/constants",
+          "@helpers": "./src/helpers",
+          "@middlewares": "./src/middlewares"
+        }
       }
     ]
   ]
