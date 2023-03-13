@@ -10,7 +10,8 @@
           "@db": "./src/db",
           "@constants": "./src/constants",
           "@helpers": "./src/helpers",
-          "@middlewares": "./src/middlewares"
+          "@middlewares": "./src/middlewares",
+          "@routes": "./src/routes"
         }
       }
     ]

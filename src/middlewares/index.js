@@ -1,3 +1,4 @@
-import bodyParser from '@middlewares/body-parser';
+import bodyParser from './body-parser';
+import router from './router';
 
-export { bodyParser };
+export { bodyParser, router };
