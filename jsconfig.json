@@ -10,6 +10,10 @@
       "@constants/*": ["./src/constants/*"],
       "@helpers": ["./src/helpers"],
       "@helpers/*": ["./src/helpers/*"],
+      "@models": ["./src/models"],
+      "@models/*": ["./src/models/*"],
+      "@routes": ["./src/routes"],
+      "@routes/*": ["./src/routes/*"],
       "@middlewares": ["./src/middlewares"],
       "@middlewares/*": ["./src/middlewares/*"]
     }

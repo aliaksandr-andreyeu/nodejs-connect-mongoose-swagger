@@ -10,6 +10,7 @@
           "@db": "./src/db",
           "@constants": "./src/constants",
           "@helpers": "./src/helpers",
+          "@models": "./src/models",
           "@middlewares": "./src/middlewares",
           "@routes": "./src/routes"
         }
