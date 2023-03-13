@@ -5,7 +5,8 @@ import xss from 'xss-clean';
 import hpp from 'hpp';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
-import { bodyParser } from '@middlewares';
+import { bodyParser, router } from '@middlewares';
+import { users, auth } from '@routes';
 
 const app = () => {
   const server = connect();
@@ -30,6 +31,9 @@ const app = () => {
   server.use(cors());
 
   server.use(bodyParser);
+
+  server.use(router(auth));
+  server.use(router(users));
 
   return server;
 };
