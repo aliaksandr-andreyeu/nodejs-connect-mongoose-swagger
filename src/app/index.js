@@ -5,7 +5,9 @@ import xss from 'xss-clean';
 import hpp from 'hpp';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
-import { bodyParser, router } from '@middlewares';
+import router from './router';
+import { bodyParser } from '@middlewares';
+
 import { users, auth } from '@routes';
 
 const app = () => {

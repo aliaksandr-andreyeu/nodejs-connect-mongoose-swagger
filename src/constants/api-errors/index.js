@@ -8,6 +8,8 @@ export const apiErrors = {
   },
   user: {
     notFound: 'User not found',
-    notUpdated: 'User not updated'
+    notUpdated: 'User not updated',
+    exists: (email) => `User with email '${email}' already exists`,
+    passwordIncorrect: 'Incorrect password'
   }
 };
