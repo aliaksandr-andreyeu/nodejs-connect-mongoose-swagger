@@ -7,7 +7,6 @@ import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
 import { bodyParser } from '@middlewares';
-
 import { users, auth } from '@routes';
 
 const app = () => {
