@@ -6,7 +6,7 @@ import hpp from 'hpp';
 import cors from 'cors';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
-import { bodyParser } from '@middlewares';
+import { bodyParser, responseDelay } from '@middlewares';
 import { users, auth } from '@routes';
 
 const app = () => {
@@ -31,6 +31,7 @@ const app = () => {
 
   server.use(cors());
 
+  server.use(responseDelay);
   server.use(bodyParser);
 
   server.use(router(auth));
