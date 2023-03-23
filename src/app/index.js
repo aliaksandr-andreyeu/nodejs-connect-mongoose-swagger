@@ -4,9 +4,10 @@ import compression from 'compression';
 import xss from 'xss-clean';
 import hpp from 'hpp';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
-import { bodyParser, responseDelay } from '@middlewares';
+import { bodyParser, errorsHandler } from '@middlewares';
 import { users, auth } from '@routes';
 
 const app = () => {
@@ -29,13 +30,23 @@ const app = () => {
     })
   );
 
-  server.use(cors());
+  server.use(
+    cors({
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true,
+      maxAge: 86400
+    })
+  );
 
-  server.use(responseDelay);
+  server.use(cookieParser());
   server.use(bodyParser);
 
   server.use(router(auth));
   server.use(router(users));
+
+  server.use(errorsHandler);
 
   return server;
 };
