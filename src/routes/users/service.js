@@ -1,4 +1,4 @@
-import { getRequestParamsId, isValidObjectId, userError, mapRequestBody } from '@helpers';
+import { getRequestParamsId, isValidObjectId, userError, mapRequestBody, getResponse } from '@helpers';
 import { apiErrors } from '@constants';
 
 import { userModel } from '@models';
@@ -8,16 +8,17 @@ const get = async (req) => {
 
   if (!id) {
     const users = await userModel.find({}).exec();
-    return users;
+
+    return getResponse(users);
   }
 
   if (!isValidObjectId(id)) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   const user = await userModel.findById(id).exec();
   if (!user) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
   return user;
 };
@@ -28,7 +29,7 @@ const create = async (req) => {
   // console.log('*** mapRequestBody Response: ', mapModel);
 
   if (mapModel.errors && mapModel.errors.length > 0) {
-    throw new userError(mapModel.errors.join(', '), 400);
+    throw userError(mapModel.errors.join(', '), 400);
   }
 
   const model = new userModel(mapModel.data);
@@ -44,11 +45,11 @@ const modify = async (req) => {
   const id = getRequestParamsId(req);
 
   if (!id) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   if (!isValidObjectId(id)) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   const mapModel = mapRequestBody(req);
@@ -56,11 +57,11 @@ const modify = async (req) => {
   // console.log('*** mapRequestBody Response: ', mapModel);
 
   if (mapModel.errors && mapModel.errors.length > 0) {
-    throw new userError(mapModel.errors.join(', '), 400);
+    throw userError(mapModel.errors.join(', '), 400);
   }
 
   if (mapModel.data && Object.keys(mapModel.data).length === 0) {
-    throw new userError(apiErrors.user.notUpdated, 400);
+    throw userError(apiErrors.user.notUpdated, 400);
   }
 
   // const model = new userModel(mapModel.data); // ??????????????????????????????????????????????????????????????
@@ -71,7 +72,7 @@ const modify = async (req) => {
   const user = await userModel.findByIdAndUpdate(id, { ...mapModel.data, ...mapModel.excluded }, { new: true }).exec();
 
   if (!user) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   return user;
@@ -81,11 +82,11 @@ const update = async (req) => {
   const id = getRequestParamsId(req);
 
   if (!id) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   if (!isValidObjectId(id)) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   const mapModel = mapRequestBody(req, true);
@@ -93,11 +94,11 @@ const update = async (req) => {
   // console.log('*** mapRequestBody Response: ', mapModel);
 
   if (mapModel.errors && mapModel.errors.length > 0) {
-    throw new userError(mapModel.errors.join(', '), 400);
+    throw userError(mapModel.errors.join(', '), 400);
   }
 
   if (mapModel.data && Object.keys(mapModel.data).length === 0) {
-    throw new userError(apiErrors.user.notUpdated, 400);
+    throw userError(apiErrors.user.notUpdated, 400);
   }
 
   // const model = new userModel(mapModel.data); // ??????????????????????????????????????????????????????????????
@@ -105,7 +106,7 @@ const update = async (req) => {
   const user = await userModel.findByIdAndUpdate(id, mapModel.data, { new: true }).exec();
 
   if (!user) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   return user;
@@ -115,17 +116,17 @@ const remove = async (req) => {
   const id = getRequestParamsId(req);
 
   if (!id) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   if (!isValidObjectId(id)) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   const user = await userModel.findByIdAndDelete(id).exec();
 
   if (!user) {
-    throw new userError(apiErrors.user.notFound, 404);
+    throw userError(apiErrors.user.notFound, 404);
   }
 
   const response = {

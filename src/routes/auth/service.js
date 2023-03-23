@@ -1,6 +1,6 @@
 import joi from 'joi';
 import bcrypt from 'bcrypt';
-import { userError, generateTokens, getResponse } from '@helpers';
+import { userError, generateTokens, getResponse, validateRefreshToken, isValidObjectId } from '@helpers';
 import { apiErrors } from '@constants';
 import { userModel } from '@models';
 
@@ -21,19 +21,19 @@ const signIn = async (req) => {
 
     console.log('signIn user: ', user);
 
+    if (!user) {
+      throw userError(apiErrors.user.notFound, 400);
+    }
+
     console.log('username: ', validatedBody.username, user.username);
     console.log('password: ', validatedBody.password, user.password);
-
-    if (!user) {
-      throw new userError(apiErrors.user.notFound, 400);
-    }
 
     const validPassword = await bcrypt.compare(validatedBody.password, user.password);
 
     console.log('signInSchema validPassword', validatedBody.password, user.password, validPassword);
 
     if (!validPassword) {
-      throw new userError(apiErrors.user.passwordIncorrect, 400);
+      throw userError(apiErrors.user.passwordIncorrect, 400);
     }
 
     // const entity = {
@@ -50,12 +50,12 @@ const signIn = async (req) => {
 
     return getResponse(data, { refreshToken });
   } catch (err) {
-    console.log('signUpSchema err.name', err.name);
-    console.log('signUpSchema err.message', err.message);
-    console.log('signUpSchema err.isJoi', err.isJoi);
-    console.log('signUpSchema err.details ', err.details);
+    console.log('signInSchema err.name', err.name);
+    console.log('signInSchema err.message', err.message);
+    console.log('signInSchema err.isJoi', err.isJoi);
+    console.log('signInSchema err.details ', err.details);
     // throw new Error(err.message);
-    throw new userError(err.message, 400);
+    throw userError(err.message, 400);
   }
 };
 
@@ -79,7 +79,7 @@ const signUp = async (req) => {
     console.log('userExist: ', userExist);
 
     if (userExist) {
-      throw new userError(apiErrors.user.exists(validatedBody.username), 400);
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -108,12 +108,50 @@ const signUp = async (req) => {
     console.log('signUpSchema err.isJoi', err.isJoi);
     console.log('signUpSchema err.details ', err.details);
     // throw new Error(err.message);
-    throw new userError(err.message, 400);
+    throw userError(err.message, 400);
   }
+};
+
+const refreshToken = async (req) => {
+  const cookies = req.cookies;
+
+  if (!(cookies && cookies['X-Refresh-Token'])) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  const jwtRefreshToken = cookies['X-Refresh-Token'];
+
+  console.log(' ************************** jwtRefreshToken: ', jwtRefreshToken);
+
+  const jwtData = validateRefreshToken(jwtRefreshToken);
+
+  if (!(jwtData && jwtData.id && isValidObjectId(jwtData.id) && jwtData.email)) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  console.log(' ************************** jwtData: ', jwtData);
+
+  const user = await userModel.findById(jwtData.id).exec();
+
+  if (!(user && user.username && user.username === jwtData.email)) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  console.log('user: ', user, Boolean(user && user.username && user.username === jwtData.email));
+
+  const { accessToken, refreshToken } = generateTokens(user);
+
+  const data = {
+    overview: user.getPublicFields(),
+    accessToken
+  };
+
+  return getResponse(data, { refreshToken });
 };
 
 const authService = {
   signIn,
-  signUp
+  signUp,
+  refreshToken
 };
 export default authService;

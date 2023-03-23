@@ -2,11 +2,26 @@ import { getUsers, createUser, modifyUser, updateUser, deleteUser } from './cont
 
 const users = {
   '/users': {
-    GET: getUsers,
-    POST: createUser,
-    PUT: modifyUser,
-    PATCH: updateUser,
-    DELETE: deleteUser
+    GET: {
+      handler: getUsers,
+      auth: true
+    },
+    POST: {
+      handler: createUser,
+      auth: true
+    },
+    PUT: {
+      handler: modifyUser,
+      auth: true
+    },
+    PATCH: {
+      handler: updateUser,
+      auth: true
+    },
+    DELETE: {
+      handler: deleteUser,
+      auth: true
+    }
   }
 };
 
