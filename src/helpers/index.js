@@ -1,4 +1,3 @@
-import errorHandler from './error-handler';
 import {
   getRequestParamsId,
   userError,
@@ -7,13 +6,14 @@ import {
   validateEmail,
   generateTokens,
   getResponse,
-  getRefreshTokenCookieHeader
+  getCookieHeader,
+  validateRefreshToken,
+  validateAccessToken
 } from './http-utils';
 import { isValidObjectId } from './db-utils';
 
 export {
   isValidObjectId,
-  errorHandler,
   getRequestParamsId,
   userError,
   mapRequestBody,
@@ -21,5 +21,7 @@ export {
   validateEmail,
   generateTokens,
   getResponse,
-  getRefreshTokenCookieHeader
+  getCookieHeader,
+  validateRefreshToken,
+  validateAccessToken
 };
