@@ -1,14 +1,15 @@
 import { httpStatusMessage, jsonHeader, encoding } from '@constants';
 
-const errorHandler = (err, req, res, next) => {
+const errorsHandler = (err, req, res, next) => {
   if (!err) {
     next();
     return;
   }
 
+  console.log('***************************************************');
   console.log('*** Error name: ', err.name);
   console.log('*** Error message: ', err.message);
-  console.log('*** Error stack: ', err.stack);
+  // console.log('*** Error stack: ', err.stack);
 
   const code = err.code || 400;
 
@@ -21,4 +22,4 @@ const errorHandler = (err, req, res, next) => {
   res.end(JSON.stringify(response), encoding);
 };
 
-export default errorHandler;
+export default errorsHandler;

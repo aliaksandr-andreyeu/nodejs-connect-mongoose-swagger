@@ -1,5 +1,5 @@
 import { apiErrors } from '@constants';
-import { userError, errorHandler } from '@helpers';
+import { userError } from '@helpers';
 
 const bodyParser = (req, res, next) => {
   let body = [];
@@ -18,7 +18,7 @@ const bodyParser = (req, res, next) => {
 
       try {
         if (!body) {
-          throw new userError(apiErrors.common.bodyIsEmpty, 400);
+          throw userError(apiErrors.common.bodyIsEmpty, 400);
         }
 
         const contentType = req.headers['content-type'];
@@ -30,12 +30,12 @@ const bodyParser = (req, res, next) => {
             req.body = jsonBody;
 
             next();
-          } catch (e) {
-            throw new userError(apiErrors.common.invalidJSON, 400);
+          } catch (err) {
+            throw userError(apiErrors.common.invalidJSON, 400);
           }
         }
-      } catch (err) {
-        errorHandler(err, req, res, next);
+      } catch (error) {
+        next(error);
       }
     });
 };
