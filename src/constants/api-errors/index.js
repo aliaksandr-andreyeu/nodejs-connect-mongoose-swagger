@@ -4,7 +4,8 @@ export const apiErrors = {
     fieldRequired: (fieldName) => `Field '${fieldName}' is required`,
     fieldNotNumber: (fieldName) => `Field '${fieldName}' is not a number`,
     bodyIsEmpty: 'Request body is null or empty',
-    invalidJSON: 'Invalid JSON message received'
+    invalidJSON: 'Invalid JSON message received',
+    unauthorized: 'Authorization Required'
   },
   user: {
     notFound: 'User not found',

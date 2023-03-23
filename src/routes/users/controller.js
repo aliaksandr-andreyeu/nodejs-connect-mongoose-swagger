@@ -1,16 +1,14 @@
-import { errorHandler } from '@helpers';
 import { httpStatusMessage, jsonHeader, eTagHeader, encoding } from '@constants';
-
 import usersService from './service';
 
 export const getUsers = async (req, res, next) => {
   try {
-    const response = await usersService.get(req);
+    const { response } = await usersService.get(req);
 
     res.writeHead(200, httpStatusMessage[200], jsonHeader);
     res.end(JSON.stringify(response), encoding);
-  } catch (err) {
-    errorHandler(err, req, res, next);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -20,8 +18,8 @@ export const createUser = async (req, res, next) => {
 
     res.writeHead(201, httpStatusMessage[201], jsonHeader);
     res.end(JSON.stringify(response), encoding);
-  } catch (err) {
-    errorHandler(err, req, res, next);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -31,8 +29,8 @@ export const modifyUser = async (req, res, next) => {
 
     res.writeHead(200, httpStatusMessage[200], jsonHeader);
     res.end(JSON.stringify(response), encoding);
-  } catch (err) {
-    errorHandler(err, req, res, next);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -40,12 +38,12 @@ export const updateUser = async (req, res, next) => {
   try {
     const response = await usersService.update(req);
 
-    const resStr = JSON.stringify(response);
+    const data = JSON.stringify(response);
 
-    res.writeHead(200, httpStatusMessage[200], { ...jsonHeader, ...eTagHeader(resStr) });
-    res.end(resStr, encoding);
-  } catch (err) {
-    errorHandler(err, req, res, next);
+    res.writeHead(200, httpStatusMessage[200], { ...jsonHeader, ...eTagHeader(data) });
+    res.end(data, encoding);
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -55,7 +53,7 @@ export const deleteUser = async (req, res, next) => {
 
     res.writeHead(200, httpStatusMessage[200], jsonHeader);
     res.end(JSON.stringify(response), encoding);
-  } catch (err) {
-    errorHandler(err, req, res, next);
+  } catch (error) {
+    next(error);
   }
 };
