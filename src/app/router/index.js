@@ -22,19 +22,16 @@ const router = (routes) => {
     req.params = params;
 
     const obj = route[req.method];
-    const handler = (obj && obj.handler) || false;
     const auth = (obj && obj.auth) || false;
+    const handler = (obj && obj.handler) || false;
 
     if (handler && typeof handler === 'function') {
-      if (auth) {
-        jwtVerify(req, res, next);
-      }
-
-      handler(req, res, next);
+      auth ? jwtVerify(handler, req, res, next) : handler(req, res, next);
       return;
     }
 
     next();
+    return;
   };
 };
 
