@@ -149,9 +149,42 @@ const refreshToken = async (req) => {
   return getResponse(data, { refreshToken });
 };
 
+const signOut = async (req) => {
+  const cookies = req.cookies;
+
+  if (!(cookies && cookies['X-Refresh-Token'])) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  const jwtRefreshToken = cookies['X-Refresh-Token'];
+
+  console.log(' ************************** jwtRefreshToken: ', jwtRefreshToken);
+
+  const jwtData = validateRefreshToken(jwtRefreshToken);
+
+  if (!(jwtData && jwtData.id && isValidObjectId(jwtData.id) && jwtData.email)) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  console.log(' ************************** jwtData: ', jwtData);
+
+  const user = await userModel.findById(jwtData.id).exec();
+
+  if (!(user && user.username && user.username === jwtData.email)) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  console.log('user: ', user, Boolean(user && user.username && user.username === jwtData.email));
+
+  const { refreshToken } = generateTokens(user);
+
+  return getResponse(null, { refreshToken });
+};
+
 const authService = {
   signIn,
   signUp,
-  refreshToken
+  refreshToken, 
+  signOut
 };
 export default authService;

@@ -41,4 +41,15 @@ export const refreshToken = async (req, res, next) => {
   }
 };
 
-export const signOut = async (req, res, next) => {};
+export const signOut = async (req, res, next) => {
+  try {
+    const { response, refreshToken } = await authService.signOut(req);
+
+    const setCookieHeader = getCookieHeader(refreshToken, true);
+
+    res.writeHead(200, httpStatusMessage[200], { ...jsonHeader, ...setCookieHeader });
+    res.end(JSON.stringify(response), encoding);
+  } catch (error) {
+    next(error);
+  }
+};

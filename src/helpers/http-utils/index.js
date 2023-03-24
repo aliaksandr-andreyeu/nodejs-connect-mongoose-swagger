@@ -6,18 +6,18 @@ import { userModel } from '@models';
 
 const { accessTokenKey, accessTokenExpiresIn, refreshTokenKey, refreshTokenExpiresIn } = config;
 
-const getRefreshTokenCookieHeader = (token = '') => {
-  const maxAge = refreshTokenExpiresIn * 60;
-  const expiresIn = new Date(new Date().getTime() + refreshTokenExpiresIn * 60 * 1000).toUTCString();
+const getRefreshTokenCookieHeader = (token = '', expired = false) => {
+  const maxAge = expired ? 0 : refreshTokenExpiresIn * 60;
+  const expiresIn = new Date(new Date().getTime() + (expired ? 0 : refreshTokenExpiresIn * 60 * 1000)).toUTCString();
 
   const options = [`X-Refresh-Token=${token}`, 'Path=/', 'HttpOnly', `Max-Age=${maxAge}`, `Expires=${expiresIn}`];
 
   return options.join('; ');
 };
 
-export const getCookieHeader = (refreshToken) => {
+export const getCookieHeader = (refreshToken, expired = false) => {
   const options = [];
-  refreshToken && options.push(getRefreshTokenCookieHeader(refreshToken));
+  refreshToken && options.push(getRefreshTokenCookieHeader(refreshToken, expired));
   return options.length > 0
     ? {
         'Set-Cookie': options
