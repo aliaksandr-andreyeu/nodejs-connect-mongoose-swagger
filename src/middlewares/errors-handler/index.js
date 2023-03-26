@@ -9,7 +9,7 @@ const errorsHandler = (err, req, res, next) => {
   console.log('***************************************************');
   console.log('*** Error name: ', err.name);
   console.log('*** Error message: ', err.message);
-  // console.log('*** Error stack: ', err.stack);
+  console.log('*** Error stack: ', err.stack);
 
   const code = err.code || 400;
 

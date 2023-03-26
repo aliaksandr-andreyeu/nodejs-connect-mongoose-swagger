@@ -1,5 +1,5 @@
 import { apiErrors } from '@constants';
-import { userError } from '@helpers';
+import { userError, isObject } from '@helpers';
 
 const bodyParser = (req, res, next) => {
   let body = [];
@@ -27,6 +27,11 @@ const bodyParser = (req, res, next) => {
         if (isApplicationJson) {
           try {
             const jsonBody = JSON.parse(body);
+
+            if (!isObject(jsonBody)) {
+              throw userError(apiErrors.common.invalidJSON, 400);
+            }
+
             req.body = jsonBody;
 
             next();

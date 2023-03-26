@@ -184,7 +184,7 @@ const signOut = async (req) => {
 const authService = {
   signIn,
   signUp,
-  refreshToken, 
+  refreshToken,
   signOut
 };
 export default authService;

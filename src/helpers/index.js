@@ -1,3 +1,5 @@
+import { isObject } from './utils';
+
 import {
   getRequestParamsId,
   userError,
@@ -10,6 +12,7 @@ import {
   validateRefreshToken,
   validateAccessToken
 } from './http-utils';
+
 import { isValidObjectId } from './db-utils';
 
 export {
@@ -23,5 +26,6 @@ export {
   getResponse,
   getCookieHeader,
   validateRefreshToken,
-  validateAccessToken
+  validateAccessToken,
+  isObject
 };

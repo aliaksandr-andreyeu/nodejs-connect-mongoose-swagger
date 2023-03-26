@@ -36,7 +36,7 @@ export const modifyUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   try {
-    const response = await usersService.update(req);
+    const { response } = await usersService.update(req);
 
     const data = JSON.stringify(response);
 

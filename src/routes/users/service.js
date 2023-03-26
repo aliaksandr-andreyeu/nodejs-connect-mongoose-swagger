@@ -81,11 +81,7 @@ const modify = async (req) => {
 const update = async (req) => {
   const id = getRequestParamsId(req);
 
-  if (!id) {
-    throw userError(apiErrors.user.notFound, 404);
-  }
-
-  if (!isValidObjectId(id)) {
+  if (!(id && isValidObjectId(id))) {
     throw userError(apiErrors.user.notFound, 404);
   }
 
@@ -109,7 +105,7 @@ const update = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  return user;
+  return getResponse(user);
 };
 
 const remove = async (req) => {
