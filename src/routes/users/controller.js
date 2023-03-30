@@ -49,7 +49,7 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
-    const response = await usersService.remove(req);
+    const { response } = await usersService.remove(req);
 
     res.writeHead(200, httpStatusMessage[200], jsonHeader);
     res.end(JSON.stringify(response), encoding);

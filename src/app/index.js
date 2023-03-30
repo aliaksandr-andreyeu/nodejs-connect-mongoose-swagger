@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
 import { bodyParser, errorsHandler } from '@middlewares';
-import { users, auth } from '@routes';
+import { users, auth, account } from '@routes';
 
 const app = () => {
   const server = connect();
@@ -45,6 +45,7 @@ const app = () => {
 
   server.use(router(auth));
   server.use(router(users));
+  server.use(router(account));
 
   server.use(errorsHandler);
 
