@@ -18,7 +18,26 @@ const contactUs = async (req) => {
   }
 };
 
+const getAccount = async (req) => {
+  return getResponse();
+};
+
+const editAccount = async (req) => {
+  const body = req.body;
+
+  return getResponse(body);
+};
+
+const changePassword = async (req) => {
+  const body = req.body;
+
+  return getResponse(body);
+};
+
 const accountService = {
-  contactUs
+  contactUs,
+  getAccount,
+  editAccount,
+  changePassword
 };
 export default accountService;

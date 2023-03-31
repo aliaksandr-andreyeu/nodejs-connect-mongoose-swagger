@@ -90,7 +90,11 @@ userSchema.methods = {
   getPublicFields: function () {
     return {
       id: this._id,
-      username: this.username
+      username: this.username,
+      name: this.name,
+      surname: this.surname,
+      age: this.age,
+      job: this.job
       // accessToken: this.accessToken,
       // refreshToken: this.refreshToken,
       // expiresIn: this.expiresIn,
