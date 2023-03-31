@@ -1,11 +1,21 @@
+import joi from 'joi';
 import { userError, getResponse } from '@helpers';
 
 const contactUs = async (req) => {
   const body = req.body;
 
-  throw userError('This message has not been sent', 400);
+  const contactUsSchema = joi.object({
+    subject: joi.string().required(),
+    message: joi.string().required()
+  });
 
-  return getResponse(body);
+  try {
+    const validatedBody = await contactUsSchema.validateAsync(body);
+
+    return getResponse();
+  } catch (err) {
+    throw userError(err.message, 400);
+  }
 };
 
 const accountService = {

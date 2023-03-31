@@ -12,6 +12,8 @@ const signIn = async (req) => {
     password: joi.string().required()
   });
 
+  /* TO DO: Customize error messages */
+
   try {
     const validatedBody = await signInSchema.validateAsync(body);
 
@@ -68,6 +70,8 @@ const signUp = async (req) => {
     username: joi.string().required(),
     password: joi.string().required()
   });
+
+  /* TO DO: Customize error messages */
 
   try {
     const validatedBody = await signUpSchema.validateAsync(body);
