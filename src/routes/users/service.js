@@ -1,6 +1,5 @@
 import { getRequestParamsId, isValidObjectId, userError, mapRequestBody, getResponse } from '@helpers';
 import { apiErrors } from '@constants';
-
 import { userModel } from '@models';
 
 const get = async (req) => {
@@ -20,7 +19,8 @@ const get = async (req) => {
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
-  return user;
+
+  return getResponse(user.getPublicFields());
 };
 
 const create = async (req) => {
@@ -38,7 +38,8 @@ const create = async (req) => {
   // console.log('*** toJSON: ', model.toJSON({ virtuals: true }));
 
   const user = await model.save();
-  return user;
+
+  return getResponse(user.getPublicFields());
 };
 
 const modify = async (req) => {
@@ -75,7 +76,7 @@ const modify = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  return user;
+  return getResponse(user.getPublicFields());
 };
 
 const update = async (req) => {
@@ -105,7 +106,7 @@ const update = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  return getResponse(user);
+  return getResponse(user.getPublicFields());
 };
 
 const remove = async (req) => {
@@ -125,12 +126,7 @@ const remove = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  const response = {
-    isOk: true,
-    message: 'User deleted'
-  };
-
-  return response;
+  return getResponse();
 };
 
 const usersService = {

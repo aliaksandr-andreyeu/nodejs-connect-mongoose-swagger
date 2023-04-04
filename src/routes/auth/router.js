@@ -1,4 +1,4 @@
-import { signIn, signUp, refreshToken, signOut } from './controller';
+import { signIn, signUp, refreshToken, resetPassword, signOut } from './controller';
 
 const auth = {
   '/signin': {
@@ -14,6 +14,11 @@ const auth = {
   '/refresh-token': {
     GET: {
       handler: refreshToken
+    }
+  },
+  '/reset-password': {
+    POST: {
+      handler: resetPassword
     }
   },
   '/signout': {

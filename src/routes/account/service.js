@@ -17,6 +17,7 @@ const contactUs = async (req) => {
     const validatedBody = await contactUsSchema.validateAsync(body);
 
     /* TODO:  Mailer logic */
+    console.log('contactUs validatedBody: ', validatedBody);
 
     const token = getAccessToken(req);
     const jwtAccessData = validateAccessToken(token);

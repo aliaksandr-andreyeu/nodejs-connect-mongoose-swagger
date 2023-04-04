@@ -14,7 +14,7 @@ export const getUsers = async (req, res, next) => {
 
 export const createUser = async (req, res, next) => {
   try {
-    const response = await usersService.create(req);
+    const { response } = await usersService.create(req);
 
     res.writeHead(201, httpStatusMessage[201], jsonHeader);
     res.end(JSON.stringify(response), encoding);
@@ -25,7 +25,7 @@ export const createUser = async (req, res, next) => {
 
 export const modifyUser = async (req, res, next) => {
   try {
-    const response = await usersService.modify(req);
+    const { response } = await usersService.modify(req);
 
     res.writeHead(200, httpStatusMessage[200], jsonHeader);
     res.end(JSON.stringify(response), encoding);

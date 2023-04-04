@@ -1,6 +1,13 @@
 import joi from 'joi';
 import bcrypt from 'bcrypt';
-import { userError, generateTokens, getResponse, validateRefreshToken, isValidObjectId } from '@helpers';
+import {
+  userError,
+  generateTokens,
+  getResponse,
+  validateRefreshToken,
+  isValidObjectId,
+  getRefreshToken
+} from '@helpers';
 import { apiErrors } from '@constants';
 import { userModel } from '@models';
 
@@ -17,31 +24,17 @@ const signIn = async (req) => {
   try {
     const validatedBody = await signInSchema.validateAsync(body);
 
-    console.log('signInSchema validatedBody', validatedBody);
-
     const user = await userModel.findOne({ username: validatedBody.username });
-
-    console.log('signIn user: ', user);
 
     if (!user) {
       throw userError(apiErrors.user.notFound, 400);
     }
 
-    console.log('username: ', validatedBody.username, user.username);
-    console.log('password: ', validatedBody.password, user.password);
-
     const validPassword = await bcrypt.compare(validatedBody.password, user.password);
-
-    console.log('signInSchema validPassword', validatedBody.password, user.password, validPassword);
 
     if (!validPassword) {
       throw userError(apiErrors.user.passwordIncorrect, 400);
     }
-
-    // const entity = {
-    // username: validatedBody.username,
-    // password: validatedBody.password,
-    // };
 
     const { accessToken, refreshToken } = generateTokens(user);
 
@@ -52,19 +45,36 @@ const signIn = async (req) => {
 
     return getResponse(data, { refreshToken });
   } catch (err) {
-    console.log('signInSchema err.name', err.name);
-    console.log('signInSchema err.message', err.message);
-    console.log('signInSchema err.isJoi', err.isJoi);
-    console.log('signInSchema err.details ', err.details);
-    // throw new Error(err.message);
+    throw userError(err.message, 400);
+  }
+};
+
+const resetPassword = async (req) => {
+  const body = req.body;
+
+  const resetPasswordSchema = joi.object({
+    username: joi.string().required()
+  });
+
+  /* TO DO: Customize error messages */
+
+  try {
+    const validatedBody = await resetPasswordSchema.validateAsync(body);
+
+    const user = await userModel.findOne({ username: validatedBody.username });
+
+    if (!user) {
+      throw userError(apiErrors.user.notFound, 400);
+    }
+
+    return getResponse();
+  } catch (err) {
     throw userError(err.message, 400);
   }
 };
 
 const signUp = async (req) => {
   const body = req.body;
-
-  console.log('signUp body', body);
 
   const signUpSchema = joi.object({
     username: joi.string().required(),
@@ -76,11 +86,7 @@ const signUp = async (req) => {
   try {
     const validatedBody = await signUpSchema.validateAsync(body);
 
-    console.log('signUpSchema validatedBody', validatedBody);
-
     const userExist = await userModel.findOne({ username: validatedBody.username });
-
-    console.log('userExist: ', userExist);
 
     if (userExist) {
       throw userError(apiErrors.user.exists(validatedBody.username), 400);
@@ -107,25 +113,12 @@ const signUp = async (req) => {
 
     return getResponse(data, { refreshToken });
   } catch (err) {
-    console.log('signUpSchema err.name', err.name);
-    console.log('signUpSchema err.message', err.message);
-    console.log('signUpSchema err.isJoi', err.isJoi);
-    console.log('signUpSchema err.details ', err.details);
-    // throw new Error(err.message);
     throw userError(err.message, 400);
   }
 };
 
 const refreshToken = async (req) => {
-  const cookies = req.cookies;
-
-  if (!(cookies && cookies['X-Refresh-Token'])) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
-
-  const jwtRefreshToken = cookies['X-Refresh-Token'];
-
-  console.log(' ************************** jwtRefreshToken: ', jwtRefreshToken);
+  const jwtRefreshToken = getRefreshToken(req);
 
   const jwtData = validateRefreshToken(jwtRefreshToken);
 
@@ -133,15 +126,11 @@ const refreshToken = async (req) => {
     throw userError(apiErrors.common.unauthorized, 401);
   }
 
-  console.log(' ************************** jwtData: ', jwtData);
-
   const user = await userModel.findById(jwtData.id).exec();
 
   if (!(user && user.username && user.username === jwtData.email)) {
     throw userError(apiErrors.common.unauthorized, 401);
   }
-
-  console.log('user: ', user, Boolean(user && user.username && user.username === jwtData.email));
 
   const { accessToken, refreshToken } = generateTokens(user);
 
@@ -154,15 +143,7 @@ const refreshToken = async (req) => {
 };
 
 const signOut = async (req) => {
-  const cookies = req.cookies;
-
-  if (!(cookies && cookies['X-Refresh-Token'])) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
-
-  const jwtRefreshToken = cookies['X-Refresh-Token'];
-
-  console.log(' ************************** jwtRefreshToken: ', jwtRefreshToken);
+  const jwtRefreshToken = getRefreshToken(req);
 
   const jwtData = validateRefreshToken(jwtRefreshToken);
 
@@ -170,15 +151,11 @@ const signOut = async (req) => {
     throw userError(apiErrors.common.unauthorized, 401);
   }
 
-  console.log(' ************************** jwtData: ', jwtData);
-
   const user = await userModel.findById(jwtData.id).exec();
 
   if (!(user && user.username && user.username === jwtData.email)) {
     throw userError(apiErrors.common.unauthorized, 401);
   }
-
-  console.log('user: ', user, Boolean(user && user.username && user.username === jwtData.email));
 
   const { refreshToken } = generateTokens(user);
 
@@ -189,6 +166,7 @@ const authService = {
   signIn,
   signUp,
   refreshToken,
-  signOut
+  signOut,
+  resetPassword
 };
 export default authService;

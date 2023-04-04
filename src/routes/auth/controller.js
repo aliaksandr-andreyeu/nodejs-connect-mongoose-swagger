@@ -41,6 +41,17 @@ export const refreshToken = async (req, res, next) => {
   }
 };
 
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { response } = await authService.resetPassword(req);
+
+    res.writeHead(200, httpStatusMessage[200], jsonHeader);
+    res.end(JSON.stringify(response), encoding);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const signOut = async (req, res, next) => {
   try {
     const { response, refreshToken } = await authService.signOut(req);
