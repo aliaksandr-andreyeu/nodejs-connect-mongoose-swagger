@@ -10,7 +10,9 @@ import {
   getResponse,
   getCookieHeader,
   validateRefreshToken,
-  validateAccessToken
+  validateAccessToken,
+  getAccessToken,
+  getRefreshToken
 } from './http-utils';
 
 import { isValidObjectId } from './db-utils';
@@ -27,5 +29,7 @@ export {
   getCookieHeader,
   validateRefreshToken,
   validateAccessToken,
-  isObject
+  isObject,
+  getAccessToken,
+  getRefreshToken
 };

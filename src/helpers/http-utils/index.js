@@ -6,6 +6,34 @@ import { userModel } from '@models';
 
 const { accessTokenKey, accessTokenExpiresIn, refreshTokenKey, refreshTokenExpiresIn } = config;
 
+export const getAccessToken = (req) => {
+  if (!req) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  const headers = req.headers;
+
+  if (!(headers && headers['authorization'])) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  return headers['authorization'].replace('Bearer ', '');
+};
+
+export const getRefreshToken = (req) => {
+  if (!req) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  const cookies = req.cookies;
+
+  if (!(cookies && cookies['X-Refresh-Token'])) {
+    throw userError(apiErrors.common.unauthorized, 401);
+  }
+
+  return cookies['X-Refresh-Token'];
+};
+
 const getRefreshTokenCookieHeader = (token = '', expired = false) => {
   const maxAge = expired ? 0 : refreshTokenExpiresIn * 60;
   const expiresIn = new Date(new Date().getTime() + (expired ? 0 : refreshTokenExpiresIn * 60 * 1000)).toUTCString();

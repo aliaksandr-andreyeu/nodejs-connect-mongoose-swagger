@@ -11,6 +11,8 @@ export const apiErrors = {
     notFound: 'User not found',
     notUpdated: 'User not updated',
     exists: (email) => `User with email '${email}' already exists`,
-    passwordIncorrect: 'Incorrect password'
+    passwordIncorrect: 'Incorrect password',
+    confirmIncorrect: 'Incorrect password confirmation',
+    sameOldNewPassword: 'New password cannot be the same as old password'
   }
 };

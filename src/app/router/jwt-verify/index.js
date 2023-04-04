@@ -1,20 +1,20 @@
 import { apiErrors } from '@constants';
-import { userError, validateRefreshToken, validateAccessToken, isValidObjectId } from '@helpers';
+import {
+  userError,
+  validateRefreshToken,
+  validateAccessToken,
+  isValidObjectId,
+  getAccessToken,
+  getRefreshToken
+} from '@helpers';
 import { userModel } from '@models';
 
 const jwtVerify = async (handler, req, res, next) => {
   try {
     console.log('----------------------------------------- jwtVerify');
 
-    const cookies = req.cookies;
-    const headers = req.headers;
-
-    if (!(cookies && cookies['X-Refresh-Token'] && headers && headers['authorization'])) {
-      throw userError(apiErrors.common.unauthorized, 401);
-    }
-
-    const refreshToken = cookies['X-Refresh-Token'];
-    const accessToken = headers['authorization'].replace('Bearer ', '');
+    const refreshToken = getRefreshToken(req);
+    const accessToken = getAccessToken(req);
 
     console.log(' ************************** refreshToken: ', refreshToken);
     console.log(' ************************** accessToken: ', accessToken);
