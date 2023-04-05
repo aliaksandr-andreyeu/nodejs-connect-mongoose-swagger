@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
 import { apiErrors, config } from '@constants';
-import { userModel } from '@models';
 
 const { accessTokenKey, accessTokenExpiresIn, refreshTokenKey, refreshTokenExpiresIn } = config;
 
@@ -154,45 +153,3 @@ export const validatePassword = false;
 // Lowercase letters
 // Special characters
 // Password Length : 8 - 256
-
-export const mapRequestBody = (req, isPatch = false) => {
-  let errors = [];
-  let data = {};
-  let excluded = {};
-
-  if (!req) return { data, errors };
-
-  const model = userModel.schema.obj;
-  const body = req.body;
-
-  Object.keys(model).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(body, key)) {
-      const item = model[key].type(body[key]);
-      const value = typeof item === 'string' ? item.trim() : item;
-
-      data[key] = value;
-
-      if (typeof value === 'number' && value !== value) {
-        errors.push(apiErrors.common.fieldNotNumber(key));
-      }
-
-      if (!value && typeof value === 'string' && Boolean(model[key].required)) {
-        errors.push(apiErrors.common.fieldEmpty(key));
-      }
-    } else if (!isPatch) {
-      if (model[key].required) {
-        errors.push(apiErrors.common.fieldRequired(key));
-      } else {
-        excluded[key] = model[key].type('');
-      }
-    }
-  });
-
-  console.log('*** mapRequestBody body: ', body);
-  console.log('*** mapRequestBody model: ', model);
-  console.log('*** mapRequestBody data: ', data);
-  console.log('*** mapRequestBody excluded: ', excluded);
-  console.log('*** mapRequestBody errors: ', errors);
-
-  return { data, excluded, errors };
-};

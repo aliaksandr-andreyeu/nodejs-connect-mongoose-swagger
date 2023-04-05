@@ -1,9 +1,9 @@
 .husky/
 .vscode/
 node_modules/
+src/environments/
 build/
 *.LICENSE
 **/.DS_Store
 yarn.lock
 package-lock.json
-src/environments/

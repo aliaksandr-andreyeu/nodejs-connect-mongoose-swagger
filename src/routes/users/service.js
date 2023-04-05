@@ -1,4 +1,5 @@
-import { getRequestParamsId, isValidObjectId, userError, mapRequestBody, getResponse } from '@helpers';
+import joi from 'joi';
+import { getRequestParamsId, isValidObjectId, userError, getResponse } from '@helpers';
 import { apiErrors } from '@constants';
 import { userModel } from '@models';
 
@@ -24,22 +25,34 @@ const get = async (req) => {
 };
 
 const create = async (req) => {
-  const mapModel = mapRequestBody(req);
+  const body = req.body;
 
-  // console.log('*** mapRequestBody Response: ', mapModel);
+  const createSchema = joi.object({
+    username: joi.string().required(),
+    name: joi.string().allow(''),
+    surname: joi.string().allow(''),
+    isActive: joi.boolean(),
+    age: joi.number(),
+    job: joi.string().allow('')
+  });
 
-  if (mapModel.errors && mapModel.errors.length > 0) {
-    throw userError(mapModel.errors.join(', '), 400);
+  try {
+    const validatedBody = await createSchema.validateAsync(body);
+
+    const userExist = await userModel.findOne({ username: validatedBody.username });
+
+    if (userExist) {
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
+    }
+
+    const model = new userModel(validatedBody);
+
+    const newUser = await model.save();
+
+    return getResponse(newUser.getPublicFields());
+  } catch (err) {
+    throw userError(err.message, err.code);
   }
-
-  const model = new userModel(mapModel.data);
-
-  // console.log('*** toObject: ', model.toObject({ virtuals: true }));
-  // console.log('*** toJSON: ', model.toJSON({ virtuals: true }));
-
-  const user = await model.save();
-
-  return getResponse(user.getPublicFields());
 };
 
 const modify = async (req) => {
@@ -53,30 +66,39 @@ const modify = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  const mapModel = mapRequestBody(req);
+  const body = req.body;
 
-  // console.log('*** mapRequestBody Response: ', mapModel);
+  const modifySchema = joi.object({
+    username: joi.string().required(),
+    name: joi.string().allow(''),
+    surname: joi.string().allow(''),
+    isActive: joi.boolean(),
+    age: joi.number(),
+    job: joi.string().allow('')
+  });
 
-  if (mapModel.errors && mapModel.errors.length > 0) {
-    throw userError(mapModel.errors.join(', '), 400);
+  try {
+    const validatedBody = await modifySchema.validateAsync(body);
+
+    const entity = {
+      username: validatedBody.username,
+      name: validatedBody.name || '',
+      surname: validatedBody.surname || '',
+      isActive: validatedBody.isActive || true,
+      age: validatedBody.age || 0,
+      job: validatedBody.job || ''
+    };
+
+    const user = await userModel.findByIdAndUpdate(id, entity, { new: true }).exec();
+
+    if (!user) {
+      throw userError(apiErrors.user.notFound, 404);
+    }
+
+    return getResponse(user.getPublicFields());
+  } catch (err) {
+    throw userError(err.message, err.code);
   }
-
-  if (mapModel.data && Object.keys(mapModel.data).length === 0) {
-    throw userError(apiErrors.user.notUpdated, 400);
-  }
-
-  // const model = new userModel(mapModel.data); // ??????????????????????????????????????????????????????????????
-
-  // console.log('*** toObject: ', model.toObject({ virtuals: true }));
-  // console.log('*** toJSON: ', model.toJSON({ virtuals: true }));
-
-  const user = await userModel.findByIdAndUpdate(id, { ...mapModel.data, ...mapModel.excluded }, { new: true }).exec();
-
-  if (!user) {
-    throw userError(apiErrors.user.notFound, 404);
-  }
-
-  return getResponse(user.getPublicFields());
 };
 
 const update = async (req) => {
@@ -86,27 +108,30 @@ const update = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  const mapModel = mapRequestBody(req, true);
+  const body = req.body;
 
-  // console.log('*** mapRequestBody Response: ', mapModel);
+  const updateSchema = joi.object({
+    username: joi.string().required(),
+    name: joi.string().allow(''),
+    surname: joi.string().allow(''),
+    isActive: joi.boolean(),
+    age: joi.number(),
+    job: joi.string().allow('')
+  });
 
-  if (mapModel.errors && mapModel.errors.length > 0) {
-    throw userError(mapModel.errors.join(', '), 400);
+  try {
+    const validatedBody = await updateSchema.validateAsync(body);
+
+    const user = await userModel.findByIdAndUpdate(id, validatedBody.data, { new: true }).exec();
+
+    if (!user) {
+      throw userError(apiErrors.user.notFound, 404);
+    }
+
+    return getResponse(user.getPublicFields());
+  } catch (err) {
+    throw userError(err.message, err.code);
   }
-
-  if (mapModel.data && Object.keys(mapModel.data).length === 0) {
-    throw userError(apiErrors.user.notUpdated, 400);
-  }
-
-  // const model = new userModel(mapModel.data); // ??????????????????????????????????????????????????????????????
-
-  const user = await userModel.findByIdAndUpdate(id, mapModel.data, { new: true }).exec();
-
-  if (!user) {
-    throw userError(apiErrors.user.notFound, 404);
-  }
-
-  return getResponse(user.getPublicFields());
 };
 
 const remove = async (req) => {

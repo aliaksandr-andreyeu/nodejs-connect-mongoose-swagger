@@ -28,7 +28,7 @@ const contactUs = async (req) => {
 
     return getResponse();
   } catch (err) {
-    throw userError(err.message, 400);
+    throw userError(err.message, err.code);
   }
 };
 
@@ -78,7 +78,7 @@ const editAccount = async (req) => {
 
     return getResponse(user.getPublicFields());
   } catch (err) {
-    throw userError(err.message, 400);
+    throw userError(err.message, err.code);
   }
 };
 
@@ -137,7 +137,7 @@ const changePassword = async (req) => {
 
     return getResponse();
   } catch (err) {
-    throw userError(err.message, 400);
+    throw userError(err.message, err.code);
   }
 };
 

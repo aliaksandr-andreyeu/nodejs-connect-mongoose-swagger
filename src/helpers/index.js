@@ -3,7 +3,6 @@ import { isObject } from './utils';
 import {
   getRequestParamsId,
   userError,
-  mapRequestBody,
   validatePassword,
   validateEmail,
   generateTokens,
@@ -21,7 +20,6 @@ export {
   isValidObjectId,
   getRequestParamsId,
   userError,
-  mapRequestBody,
   validatePassword,
   validateEmail,
   generateTokens,

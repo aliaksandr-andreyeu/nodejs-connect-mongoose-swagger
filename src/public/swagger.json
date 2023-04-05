@@ -30,6 +30,11 @@
         "description": "Bearer Authentication with JWT",
         "scheme": "bearer",
         "bearerFormat": "JWT"
+      },
+      "CookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "X-Refresh-Token"
       }
     },
     "schemas": {
@@ -141,6 +146,14 @@
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "description": "X-Refresh-Token"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -214,6 +227,14 @@
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "schema": {
+                  "type": "string",
+                  "description": "X-Refresh-Token"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -265,9 +286,31 @@
     "/refresh-token": {
       "get": {
         "tags": ["Auth"],
+        "security": [
+          {
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "X-Refresh-Token",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "X-Refresh-Token",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -394,12 +437,32 @@
         "tags": ["Auth"],
         "security": [
           {
+            "CookieAuth": []
+          },
+          {
             "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "X-Refresh-Token",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Set-Cookie": {
+                "description": "X-Refresh-Token",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -792,7 +855,7 @@
           {
             "name": "id",
             "in": "query",
-            "description": "Status values that need to be considered for filter",
+            "description": "User ID",
             "schema": {
               "type": "string"
             }
@@ -865,6 +928,37 @@
             "Bearer": []
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "surname": {
+                    "type": "string"
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  },
+                  "job": {
+                    "type": "string"
+                  },
+                  "age": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Created",
@@ -930,12 +1024,43 @@
             "name": "id",
             "in": "query",
             "required": true,
-            "description": "Status values that need to be considered for filter",
+            "description": "User ID",
             "schema": {
               "type": "string"
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "surname": {
+                    "type": "string"
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  },
+                  "job": {
+                    "type": "string"
+                  },
+                  "age": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1001,12 +1126,43 @@
             "name": "id",
             "in": "query",
             "required": true,
-            "description": "Status values that need to be considered for filter",
+            "description": "User ID",
             "schema": {
               "type": "string"
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["username"],
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "surname": {
+                    "type": "string"
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  },
+                  "job": {
+                    "type": "string"
+                  },
+                  "age": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1072,7 +1228,7 @@
             "name": "id",
             "required": true,
             "in": "query",
-            "description": "Status values that need to be considered for filter",
+            "description": "User ID",
             "schema": {
               "type": "string"
             }
