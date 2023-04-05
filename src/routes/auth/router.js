@@ -23,7 +23,8 @@ const auth = {
   },
   '/signout': {
     GET: {
-      handler: signOut
+      handler: signOut,
+      auth: true
     }
   }
 };

@@ -93,8 +93,9 @@ userSchema.methods = {
       username: this.username,
       name: this.name,
       surname: this.surname,
-      age: this.age,
-      job: this.job
+      isActive: this.isActive,
+      job: this.job,
+      age: this.age
       // accessToken: this.accessToken,
       // refreshToken: this.refreshToken,
       // expiresIn: this.expiresIn,

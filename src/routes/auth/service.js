@@ -27,7 +27,7 @@ const signIn = async (req) => {
     const user = await userModel.findOne({ username: validatedBody.username });
 
     if (!user) {
-      throw userError(apiErrors.user.notFound, 400);
+      throw userError(apiErrors.user.notFound, 404);
     }
 
     const validPassword = await bcrypt.compare(validatedBody.password, user.password);
@@ -44,30 +44,6 @@ const signIn = async (req) => {
     };
 
     return getResponse(data, { refreshToken });
-  } catch (err) {
-    throw userError(err.message, 400);
-  }
-};
-
-const resetPassword = async (req) => {
-  const body = req.body;
-
-  const resetPasswordSchema = joi.object({
-    username: joi.string().required()
-  });
-
-  /* TO DO: Customize error messages */
-
-  try {
-    const validatedBody = await resetPasswordSchema.validateAsync(body);
-
-    const user = await userModel.findOne({ username: validatedBody.username });
-
-    if (!user) {
-      throw userError(apiErrors.user.notFound, 400);
-    }
-
-    return getResponse();
   } catch (err) {
     throw userError(err.message, 400);
   }
@@ -112,6 +88,30 @@ const signUp = async (req) => {
     };
 
     return getResponse(data, { refreshToken });
+  } catch (err) {
+    throw userError(err.message, 400);
+  }
+};
+
+const resetPassword = async (req) => {
+  const body = req.body;
+
+  const resetPasswordSchema = joi.object({
+    username: joi.string().required()
+  });
+
+  /* TO DO: Customize error messages */
+
+  try {
+    const validatedBody = await resetPasswordSchema.validateAsync(body);
+
+    const user = await userModel.findOne({ username: validatedBody.username });
+
+    if (!user) {
+      throw userError(apiErrors.user.notFound, 404);
+    }
+
+    return getResponse();
   } catch (err) {
     throw userError(err.message, 400);
   }

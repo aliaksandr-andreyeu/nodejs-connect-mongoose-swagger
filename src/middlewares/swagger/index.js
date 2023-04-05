@@ -14,7 +14,7 @@ const getFilePath = (filePath) => {
   return path.join(__dirname, '../../', filePath);
 };
 
-const swagger = (req, res, next) => {
+const swagger = (req, res) => {
   if (!['GET'].includes(req.method)) {
     return notFound(res);
   }
@@ -38,8 +38,7 @@ const swagger = (req, res, next) => {
       }
 
       res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Content-Type': mime.lookup(path.basename(filePath))
+        'Content-Type': `${mime.lookup(path.basename(filePath))}; charset=utf-8`
       });
       res.end(data);
     });
