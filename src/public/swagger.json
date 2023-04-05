@@ -119,7 +119,6 @@
     "/signin": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Add a new pet",
         "requestBody": {
           "required": true,
           "content": {
@@ -193,7 +192,6 @@
     "/signup": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Add a new pet",
         "requestBody": {
           "required": true,
           "content": {
@@ -267,7 +265,6 @@
     "/refresh-token": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Add a new pet",
         "responses": {
           "200": {
             "description": "OK",
@@ -332,7 +329,6 @@
     "/reset-password": {
       "post": {
         "tags": ["Auth"],
-        "summary": "Add a new pet",
         "requestBody": {
           "required": true,
           "content": {
@@ -396,7 +392,6 @@
     "/signout": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -459,7 +454,6 @@
     "/contact": {
       "post": {
         "tags": ["Account"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -541,7 +535,6 @@
     "/change-password": {
       "post": {
         "tags": ["Account"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -626,7 +619,6 @@
     "/account": {
       "get": {
         "tags": ["Account"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -694,7 +686,6 @@
       },
       "put": {
         "tags": ["Account"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -792,7 +783,6 @@
     "/users": {
       "get": {
         "tags": ["Users"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -870,7 +860,6 @@
       },
       "post": {
         "tags": ["Users"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -931,7 +920,6 @@
       },
       "put": {
         "tags": ["Users"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -1003,7 +991,6 @@
       },
       "patch": {
         "tags": ["Users"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
@@ -1075,7 +1062,6 @@
       },
       "delete": {
         "tags": ["Users"],
-        "summary": "Add a new pet",
         "security": [
           {
             "Bearer": []
