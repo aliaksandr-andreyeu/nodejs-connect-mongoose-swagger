@@ -7,11 +7,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
-import {
-  bodyParser,
-  errorsHandler
-  // , responseDelay
-} from '@middlewares';
+import { bodyParser, errorsHandler, responseDelay, swagger } from '@middlewares';
 import { users, auth, account } from '@routes';
 
 const app = () => {
@@ -44,7 +40,7 @@ const app = () => {
     })
   );
 
-  // server.use(responseDelay);
+  server.use(responseDelay);
   server.use(cookieParser());
   server.use(bodyParser);
 
@@ -52,6 +48,7 @@ const app = () => {
   server.use(router(users));
   server.use(router(account));
 
+  server.use(swagger);
   server.use(errorsHandler);
 
   return server;

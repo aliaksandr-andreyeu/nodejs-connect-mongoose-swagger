@@ -1,12 +1,15 @@
+import { config } from '@constants';
+
+const { responseTimeout } = config;
+
 const responseDelay = (req, res, next) => {
   let timer = null;
-  const delay = 3000;
 
   timer && clearTimeout(timer);
 
   timer = setTimeout(() => {
     next();
-  }, delay);
+  }, responseTimeout);
 };
 
 export default responseDelay;

@@ -19,7 +19,8 @@ const config = {
   accessTokenKey: env.ACCESS_TOKEN_KEY || '',
   accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || 5,
   refreshTokenKey: env.REFRESH_TOKEN_KEY || '',
-  refreshTokenExpiresIn: env.REFRESH_TOKEN_EXPIRES_IN || 10
+  refreshTokenExpiresIn: env.REFRESH_TOKEN_EXPIRES_IN || 10,
+  responseTimeout: env.RESPONSE_DELAY || 0
 };
 
 export default config;
