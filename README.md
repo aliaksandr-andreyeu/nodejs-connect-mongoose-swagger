@@ -4,20 +4,16 @@ Node.js REST API boilerplate with Connect, Mongoose, Swagger
 
 > This is the example of the Node.js REST API backend for related [React.js Web](https://github.com/aliaksandr-andreyeu/reactjs-rtk-dashboard) & [React Native Mobile](https://github.com/aliaksandr-andreyeu/react-native-mobx-firebase) applications.
 
-<br>
+## Configuration
 
-# Configuration
-
-## Set up a MongoDB database:
+### Set up a MongoDB database:
 
 Set up a MongoDB database either locally or with MongoDB Atlas.
 
 - [MongoDB Atlas](https://mongodb.com/atlas)
 - [MongoDB Documentation](https://docs.mongodb.com/)
 
-<br>
-
-## Set up environment variables:
+### Set up environment variables:
 
 Set MongoDB variables in [.env.development](https://github.com/aliaksandr-andreyeu/nodejs-connect-mongoose-swagger/blob/main/src/environments/.env.development):
 
@@ -27,9 +23,7 @@ Set MongoDB variables in [.env.development](https://github.com/aliaksandr-andrey
 - `DB_USER` - Database username
 - `DB_PSW` - Database username password
 
-<br>
-
-## Project set up:
+### Project set up:
 
 ```bash
 npm install
@@ -37,15 +31,11 @@ npm install
 npm run start:dev
 ```
 
-<br>
-
-# Requirements
+## Requirements
 
 - Node.js >= v16.13.0
 - MongoDB >= v3.6
 
-<br>
-
-# Licensing
+## Licensing
 
 Please see our [LICENSE](https://github.com/aliaksandr-andreyeu/nodejs-connect-mongoose-swagger/blob/main/LICENSE) for copyright and license information.
