@@ -33,8 +33,8 @@ npm run start:dev
 
 ## Requirements
 
-- Node.js >= v16.13.0
-- MongoDB >= v3.6
+- `Node.js` >= v16.13.0
+- `MongoDB` >= v3.6
 
 ## Licensing
 
