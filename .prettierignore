@@ -1,4 +1,5 @@
 .husky/
 .vscode/
+coverage/
 node_modules/
 build/
