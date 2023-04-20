@@ -122,7 +122,7 @@ const update = async (req) => {
   try {
     const validatedBody = await updateSchema.validateAsync(body);
 
-    const user = await userModel.findByIdAndUpdate(id, validatedBody.data, { new: true }).exec();
+    const user = await userModel.findByIdAndUpdate(id, validatedBody, { new: true }).exec();
 
     if (!user) {
       throw userError(apiErrors.user.notFound, 404);

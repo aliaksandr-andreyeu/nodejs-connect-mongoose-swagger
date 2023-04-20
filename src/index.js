@@ -31,12 +31,12 @@ db.connect(`mongodb://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}`, () => 
   }
 });
 
-process.on('uncaughtException', (err) => {
-  console.log('Uncaught Exception:', err);
+process.on('unhandledRejection', (error) => {
+  console.log('Unhandled Rejection Error: ', error);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (err) => {
-  console.log('Unhandled Rejection:', err);
+process.on('uncaughtException', (error) => {
+  console.log('Uncaught Exception Error: ', error);
   process.exit(1);
 });
