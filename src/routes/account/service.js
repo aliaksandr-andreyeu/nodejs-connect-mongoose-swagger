@@ -46,7 +46,7 @@ const getAccount = async (req) => {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  return getResponse(user.getPublicFields());
+  return getResponse(user);
 };
 
 const editAccount = async (req) => {
@@ -76,7 +76,7 @@ const editAccount = async (req) => {
       throw userError(apiErrors.user.notFound, 404);
     }
 
-    return getResponse(user.getPublicFields());
+    return getResponse(user);
   } catch (err) {
     throw userError(err.message, err.code);
   }

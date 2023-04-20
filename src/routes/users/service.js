@@ -17,11 +17,12 @@ const get = async (req) => {
   }
 
   const user = await userModel.findById(id).exec();
+
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
 
-  return getResponse(user.getPublicFields());
+  return getResponse(user);
 };
 
 const create = async (req) => {
@@ -49,7 +50,7 @@ const create = async (req) => {
 
     const newUser = await model.save();
 
-    return getResponse(newUser.getPublicFields());
+    return getResponse(newUser);
   } catch (err) {
     throw userError(err.message, err.code);
   }
@@ -95,7 +96,7 @@ const modify = async (req) => {
       throw userError(apiErrors.user.notFound, 404);
     }
 
-    return getResponse(user.getPublicFields());
+    return getResponse(user);
   } catch (err) {
     throw userError(err.message, err.code);
   }
@@ -128,7 +129,7 @@ const update = async (req) => {
       throw userError(apiErrors.user.notFound, 404);
     }
 
-    return getResponse(user.getPublicFields());
+    return getResponse(user);
   } catch (err) {
     throw userError(err.message, err.code);
   }

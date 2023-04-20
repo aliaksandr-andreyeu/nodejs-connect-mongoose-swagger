@@ -39,7 +39,7 @@ const signIn = async (req) => {
     const { accessToken, refreshToken } = generateTokens(user);
 
     const data = {
-      overview: user.getPublicFields(),
+      overview: user,
       accessToken
     };
 
@@ -83,7 +83,7 @@ const signUp = async (req) => {
     const { accessToken, refreshToken } = generateTokens(newUser);
 
     const data = {
-      overview: newUser.getPublicFields(),
+      overview: newUser,
       accessToken
     };
 
@@ -135,7 +135,7 @@ const refreshToken = async (req) => {
   const { accessToken, refreshToken } = generateTokens(user);
 
   const data = {
-    overview: user.getPublicFields(),
+    overview: user,
     accessToken
   };
 
