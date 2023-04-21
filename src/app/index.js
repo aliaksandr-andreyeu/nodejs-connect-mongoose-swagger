@@ -33,7 +33,7 @@ const app = () => {
   server.use(
     cors({
       allowedHeaders: ['Content-Type', 'Authorization'],
-      origin: ['http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+      origin: true,
       methods: ['HEAD', 'OPTIONS', 'GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
       credentials: true,
       maxAge: 86400

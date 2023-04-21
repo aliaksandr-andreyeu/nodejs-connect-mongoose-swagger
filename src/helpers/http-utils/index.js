@@ -37,7 +37,15 @@ const getRefreshTokenCookieHeader = (token = '', expired = false) => {
   const maxAge = expired ? 0 : refreshTokenExpiresIn * 60;
   const expiresIn = new Date(new Date().getTime() + (expired ? 0 : refreshTokenExpiresIn * 60 * 1000)).toUTCString();
 
-  const options = [`X-Refresh-Token=${token}`, 'Path=/', 'HttpOnly', `Max-Age=${maxAge}`, `Expires=${expiresIn}`];
+  const options = [
+    `X-Refresh-Token=${token}`,
+    'Path=/',
+    'SameSite=None',
+    'Secure',
+    'HttpOnly',
+    `Max-Age=${maxAge}`,
+    `Expires=${expiresIn}`
+  ];
 
   return options.join('; ');
 };

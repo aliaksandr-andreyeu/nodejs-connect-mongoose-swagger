@@ -2,7 +2,7 @@
   "name": "nodejs-connect-mongoose-swagger",
   "version": "0.1.0",
   "description": "Node.js REST API boilerplate with Connect, Mongoose, Swagger",
-  "author": "Aliaksandr Andreyeu",
+  "author": "Aliaksandr Andreyeu <andreyeu.aliaksandr@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/aliaksandr-andreyeu/nodejs-connect-mongoose-swagger",
   "repository": {
