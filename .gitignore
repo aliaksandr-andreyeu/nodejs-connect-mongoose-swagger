@@ -7,4 +7,7 @@ build/
 *.LICENSE
 **/.DS_Store
 yarn.lock
+yarn-debug.log*
+yarn-error.log*
 package-lock.json
+npm-debug.log*
