@@ -3,7 +3,7 @@
   "info": {
     "title": "Node.js Connect Mongoose Swagger API",
     "version": "0.1.0",
-    "description": "REST API boilerplate with Connect, Mongoose, and OpenAPI generated from Zod schemas"
+    "description": "REST API boilerplate with Connect, Redis, Mongoose, and OpenAPI generated from Zod schemas"
   },
   "servers": [
     {

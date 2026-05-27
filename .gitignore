@@ -4,6 +4,8 @@ node_modules/
 data/mongodb/*
 !data/mongodb/.gitkeep
 data/mongodb/.mongodb/
+data/redis/*
+!data/redis/.gitkeep
 build/
 *.LICENSE
 **/.DS_Store

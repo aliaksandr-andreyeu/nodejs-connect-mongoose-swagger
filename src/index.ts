@@ -4,6 +4,8 @@ import http from 'http';
 import cluster from 'cluster';
 import app from '@app';
 import db from '@db';
+import { connectRedis } from '@db/redis';
+import { initAuthRateLimiter } from '@middlewares';
 import { config } from '@constants';
 import { logger } from './logger';
 
@@ -28,8 +30,10 @@ const startServer = (): void => {
   });
 };
 
-const startWorker = (): void => {
-  void db.connect(mongoUrl, startServer);
+const startWorker = async (): Promise<void> => {
+  await connectRedis();
+  initAuthRateLimiter();
+  await db.connect(mongoUrl, startServer);
 };
 
 if (useCluster && cluster.isPrimary) {
@@ -45,7 +49,7 @@ if (useCluster && cluster.isPrimary) {
     cluster.fork();
   });
 } else {
-  startWorker();
+  void startWorker();
 }
 
 process.on('unhandledRejection', (error) => {

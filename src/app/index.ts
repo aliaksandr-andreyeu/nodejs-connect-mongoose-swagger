@@ -6,7 +6,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
-import { bodyParser, errorsHandler, responseDelay, swagger, xssSanitize } from '@middlewares';
+import { authRateLimit, bodyParser, errorsHandler, responseDelay, swagger, xssSanitize } from '@middlewares';
 import { users, auth, account } from '@routes';
 import { config } from '@constants';
 import { logger } from '../logger';
@@ -57,6 +57,7 @@ const app = () => {
   server.use(bodyParser);
   server.use(xssSanitize);
 
+  server.use(authRateLimit);
   server.use(router(auth));
   server.use(router(users));
   server.use(router(account));
