@@ -1,0 +1,98 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - development
+      - testing
+      - staging
+      - main
+
+jobs:
+  lint:
+    name: 🔍 Lint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.13.0
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Format
+        run: npm run format
+
+      - name: Run Lint
+        run: npm run lint
+
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.13.0
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm run test:unit
+
+  e2e:
+    name: 🧪 E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22.13.0
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run E2E Tests
+        run: npm run test:e2e
+
+  all-checks-passed:
+    needs: [lint, test, e2e]
+    if: always()
+    name: ✅ All Checks Passed
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          FAILED=""
+          # Проверяем каждый нужный джоб
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            FAILED+="lint "
+          fi
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            FAILED+="test "
+          fi
+          if [[ "${{ needs.e2e.result }}" != "success" ]]; then
+            FAILED+="e2e "
+          fi
+
+          if [[ -n "$FAILED" ]]; then
+            echo "The following required jobs failed or were skipped: $FAILED"
+            exit 1
+          fi
+          echo "All required jobs passed!"

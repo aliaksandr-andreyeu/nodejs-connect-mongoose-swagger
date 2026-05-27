@@ -1,8 +1,9 @@
-.husky/
 .vscode/
 coverage/
 node_modules/
-src/environments/
+data/mongodb/*
+!data/mongodb/.gitkeep
+data/mongodb/.mongodb/
 build/
 *.LICENSE
 **/.DS_Store
@@ -11,3 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 npm-debug.log*
+
+.env.development
+.env.production
