@@ -22,6 +22,17 @@ export interface AppConfig {
   refreshTokenExpiresIn: number;
   responseTimeout: number;
   corsOrigins: string[];
+  redis: {
+    enabled: boolean;
+    host: string;
+    port: number;
+    password: string;
+  };
+  rateLimit: {
+    enabled: boolean;
+    points: number;
+    durationSec: number;
+  };
 }
 
 const config: AppConfig = {
@@ -40,7 +51,18 @@ const config: AppConfig = {
   corsOrigins: (env.CORS_ORIGINS || '')
     .split(',')
     .map((s) => s.trim())
-    .filter(Boolean)
+    .filter(Boolean),
+  redis: {
+    enabled: env.REDIS_ENABLED !== 'false',
+    host: env.REDIS_HOST || 'localhost',
+    port: Number(env.REDIS_PORT) || 6379,
+    password: env.REDIS_PASSWORD || ''
+  },
+  rateLimit: {
+    enabled: env.RATE_LIMIT_ENABLED !== 'false',
+    points: Number(env.RATE_LIMIT_AUTH_POINTS) || 10,
+    durationSec: Number(env.RATE_LIMIT_AUTH_DURATION_SEC) || 60
+  }
 };
 
 export default config;
