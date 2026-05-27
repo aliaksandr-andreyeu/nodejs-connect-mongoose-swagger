@@ -3,6 +3,8 @@
   "preset": "ts-jest",
   "testEnvironment": "node",
   "setupFiles": ["<rootDir>/src/test/setup.ts"],
+  "coverageDirectory": "<rootDir>/coverage/unit",
+  "testPathIgnorePatterns": ["/node_modules/", "/build/", "/src/__tests__/e2e/"],
   "moduleNameMapper": {
     "^@app(.*)$": "<rootDir>/src/app$1",
     "^@db(.*)$": "<rootDir>/src/db$1",
