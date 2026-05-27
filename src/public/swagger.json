@@ -1,12 +1,14 @@
 {
   "openapi": "3.0.0",
   "info": {
+    "title": "Node.js Connect Mongoose Swagger API",
     "version": "0.1.0",
-    "title": "Company Swagger"
+    "description": "REST API boilerplate with Connect, Mongoose, and OpenAPI generated from Zod schemas"
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000",
+      "description": "Current environment"
     }
   ],
   "tags": [
@@ -16,46 +18,40 @@
     },
     {
       "name": "Account",
-      "description": "Operations with Account"
+      "description": "Operations with account"
     },
     {
       "name": "Users",
-      "description": "Operations with Users"
+      "description": "Operations with users"
     }
   ],
   "components": {
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "Bearer Authentication with JWT",
         "scheme": "bearer",
-        "bearerFormat": "JWT"
+        "bearerFormat": "JWT",
+        "description": "Bearer Authentication with JWT"
       },
       "CookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "X-Refresh-Token"
+        "name": "X-Refresh-Token",
+        "description": "Refresh token cookie"
       }
     },
     "schemas": {
-      "APIResponse": {
-        "type": "object",
-        "properties": {
-          "isOk": {
-            "type": "boolean"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
       "APIError": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
-          "status": { "type": "string" }
-        }
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": ["message", "status"]
       },
       "User": {
         "type": "object",
@@ -81,64 +77,244 @@
           "age": {
             "type": "number"
           }
-        }
+        },
+        "required": ["id", "username"]
       },
-      "AuthResponse": {
+      "AuthData": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "object",
-            "properties": {
-              "accessToken": {
-                "type": "string"
-              },
-              "overview": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
+          "accessToken": {
+            "type": "string"
+          },
+          "overview": {
+            "$ref": "#/components/schemas/User"
           }
-        }
+        },
+        "required": ["accessToken", "overview"]
       },
-      "UserResponse": {
+      "AuthResponseBody": {
         "type": "object",
         "properties": {
+          "isOk": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/AuthData"
+          }
+        },
+        "required": ["isOk", "message"]
+      },
+      "UserResponseBody": {
+        "type": "object",
+        "properties": {
+          "isOk": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
           "data": {
             "$ref": "#/components/schemas/User"
           }
-        }
+        },
+        "required": ["isOk", "message"]
       },
-      "UsersResponse": {
+      "UsersListResponseBody": {
         "type": "object",
         "properties": {
+          "isOk": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
           "data": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/User"
             }
           }
-        }
+        },
+        "required": ["isOk", "message"]
+      },
+      "EmptyResponseBody": {
+        "type": "object",
+        "properties": {
+          "isOk": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "nullable": true
+          }
+        },
+        "required": ["isOk", "message"]
+      },
+      "UserIdPathParams": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          }
+        },
+        "required": ["id"]
+      },
+      "SignInInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          }
+        },
+        "required": ["username", "password"]
+      },
+      "SignUpInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          }
+        },
+        "required": ["username", "password"]
+      },
+      "ResetPasswordInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["username"]
+      },
+      "ContactUsInput": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["subject", "message"]
+      },
+      "UserAccountInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "age": {
+            "type": "number"
+          },
+          "job": {
+            "type": "string"
+          }
+        },
+        "required": ["username"]
+      },
+      "ChangePasswordInput": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          },
+          "newpassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          },
+          "confirm": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          }
+        },
+        "required": ["password", "newpassword", "confirm"]
+      },
+      "UserProfileInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "age": {
+            "type": "number"
+          },
+          "job": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          }
+        },
+        "required": ["username"]
       }
-    }
+    },
+    "parameters": {}
   },
   "paths": {
     "/signin": {
       "post": {
         "tags": ["Auth"],
+        "summary": "Sign in",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "password"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/SignInInput"
               }
             }
           }
@@ -149,28 +325,31 @@
             "headers": {
               "Set-Cookie": {
                 "schema": {
-                  "type": "string",
-                  "description": "X-Refresh-Token"
-                }
+                  "type": "string"
+                },
+                "description": "X-Refresh-Token refresh token"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/AuthResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/AuthResponseBody"
                 }
               }
             }
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -205,21 +384,12 @@
     "/signup": {
       "post": {
         "tags": ["Auth"],
+        "summary": "Sign up",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username", "password"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/SignUpInput"
               }
             }
           }
@@ -230,28 +400,31 @@
             "headers": {
               "Set-Cookie": {
                 "schema": {
-                  "type": "string",
-                  "description": "X-Refresh-Token"
-                }
+                  "type": "string"
+                },
+                "description": "X-Refresh-Token refresh token"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/AuthResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/AuthResponseBody"
                 }
               }
             }
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -286,42 +459,22 @@
     "/refresh-token": {
       "get": {
         "tags": ["Auth"],
-        "security": [
-          {
-            "CookieAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "cookie",
-            "name": "X-Refresh-Token",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "Refresh access token",
         "responses": {
           "200": {
             "description": "OK",
             "headers": {
               "Set-Cookie": {
-                "description": "X-Refresh-Token",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "description": "X-Refresh-Token refresh token"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/AuthResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/AuthResponseBody"
                 }
               }
             }
@@ -372,18 +525,12 @@
     "/reset-password": {
       "post": {
         "tags": ["Auth"],
+        "summary": "Reset password",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/ResetPasswordInput"
               }
             }
           }
@@ -394,13 +541,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIResponse"
+                  "$ref": "#/components/schemas/EmptyResponseBody"
                 }
               }
             }
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -435,21 +592,11 @@
     "/signout": {
       "get": {
         "tags": ["Auth"],
+        "summary": "Sign out",
         "security": [
           {
+            "Bearer": [],
             "CookieAuth": []
-          },
-          {
-            "Bearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "cookie",
-            "name": "X-Refresh-Token",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -457,16 +604,16 @@
             "description": "OK",
             "headers": {
               "Set-Cookie": {
-                "description": "X-Refresh-Token",
                 "schema": {
                   "type": "string"
-                }
+                },
+                "description": "Clears X-Refresh-Token cookie"
               }
             },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIResponse"
+                  "$ref": "#/components/schemas/EmptyResponseBody"
                 }
               }
             }
@@ -517,26 +664,18 @@
     "/contact": {
       "post": {
         "tags": ["Account"],
+        "summary": "Contact us",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["subject", "message"],
-                "type": "object",
-                "properties": {
-                  "subject": {
-                    "type": "string"
-                  },
-                  "message": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/ContactUsInput"
               }
             }
           }
@@ -547,91 +686,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/change-password": {
-      "post": {
-        "tags": ["Account"],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["password", "newpassword", "confirm"],
-                "type": "object",
-                "properties": {
-                  "password": {
-                    "type": "string"
-                  },
-                  "newpassword": {
-                    "type": "string"
-                  },
-                  "confirm": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIResponse"
+                  "$ref": "#/components/schemas/EmptyResponseBody"
                 }
               }
             }
@@ -682,9 +737,11 @@
     "/account": {
       "get": {
         "tags": ["Account"],
+        "summary": "Get current account",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "responses": {
@@ -693,14 +750,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UserResponseBody"
                 }
               }
             }
@@ -749,35 +799,18 @@
       },
       "put": {
         "tags": ["Account"],
+        "summary": "Update current account",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "surname": {
-                    "type": "string"
-                  },
-                  "age": {
-                    "type": "number"
-                  },
-                  "job": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/UserAccountInput"
               }
             }
           }
@@ -788,14 +821,80 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UserResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/change-password": {
+      "post": {
+        "tags": ["Account"],
+        "summary": "Change password",
+        "security": [
+          {
+            "Bearer": [],
+            "CookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyResponseBody"
                 }
               }
             }
@@ -846,19 +945,11 @@
     "/users": {
       "get": {
         "tags": ["Users"],
+        "summary": "List users",
         "security": [
           {
-            "Bearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "description": "User ID",
-            "schema": {
-              "type": "string"
-            }
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "responses": {
@@ -867,21 +958,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "oneOf": [
-                        {
-                          "$ref": "#/components/schemas/UserResponse"
-                        },
-                        {
-                          "$ref": "#/components/schemas/UsersResponse"
-                        }
-                      ]
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UsersListResponseBody"
                 }
               }
             }
@@ -930,38 +1007,18 @@
       },
       "post": {
         "tags": ["Users"],
+        "summary": "Create user",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "surname": {
-                    "type": "string"
-                  },
-                  "isActive": {
-                    "type": "boolean"
-                  },
-                  "job": {
-                    "type": "string"
-                  },
-                  "age": {
-                    "type": "number"
-                  }
-                }
+                "$ref": "#/components/schemas/UserProfileInput"
               }
             }
           }
@@ -972,14 +1029,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UserResponseBody"
                 }
               }
             }
@@ -1025,52 +1075,34 @@
             }
           }
         }
-      },
+      }
+    },
+    "/users/{id}": {
       "put": {
         "tags": ["Users"],
+        "summary": "Replace user by id",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "description": "User ID",
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "description": "User ID"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "surname": {
-                    "type": "string"
-                  },
-                  "isActive": {
-                    "type": "boolean"
-                  },
-                  "job": {
-                    "type": "string"
-                  },
-                  "age": {
-                    "type": "number"
-                  }
-                }
+                "$ref": "#/components/schemas/UserProfileInput"
               }
             }
           }
@@ -1081,14 +1113,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UserResponseBody"
                 }
               }
             }
@@ -1137,49 +1162,29 @@
       },
       "patch": {
         "tags": ["Users"],
+        "summary": "Update user by id",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "description": "User ID",
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "description": "User ID"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "required": ["username"],
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "surname": {
-                    "type": "string"
-                  },
-                  "isActive": {
-                    "type": "boolean"
-                  },
-                  "job": {
-                    "type": "string"
-                  },
-                  "age": {
-                    "type": "number"
-                  }
-                }
+                "$ref": "#/components/schemas/UserProfileInput"
               }
             }
           }
@@ -1190,14 +1195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/APIResponse"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UserResponseBody"
                 }
               }
             }
@@ -1246,20 +1244,22 @@
       },
       "delete": {
         "tags": ["Users"],
+        "summary": "Delete user by id",
         "security": [
           {
-            "Bearer": []
+            "Bearer": [],
+            "CookieAuth": []
           }
         ],
         "parameters": [
           {
-            "name": "id",
-            "required": true,
-            "in": "query",
-            "description": "User ID",
             "schema": {
-              "type": "string"
-            }
+              "type": "string",
+              "description": "User ID"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
           }
         ],
         "responses": {
@@ -1268,7 +1268,80 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/APIResponse"
+                  "$ref": "#/components/schemas/EmptyResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by id",
+        "security": [
+          {
+            "Bearer": [],
+            "CookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "User ID"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseBody"
                 }
               }
             }

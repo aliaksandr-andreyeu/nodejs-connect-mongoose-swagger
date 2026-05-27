@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "outDir": "./build",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@app": ["./src/app"],
+      "@app/*": ["./src/app/*"],
+      "@db": ["./src/db"],
+      "@db/*": ["./src/db/*"],
+      "@constants": ["./src/constants"],
+      "@constants/*": ["./src/constants/*"],
+      "@helpers": ["./src/helpers"],
+      "@helpers/*": ["./src/helpers/*"],
+      "@models": ["./src/models"],
+      "@models/*": ["./src/models/*"],
+      "@routes": ["./src/routes"],
+      "@routes/*": ["./src/routes/*"],
+      "@middlewares": ["./src/middlewares"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@types": ["./src/types"],
+      "@types/*": ["./src/types/*"],
+      "@validation": ["./src/validation"],
+      "@validation/*": ["./src/validation/*"],
+      "@openapi/zod": ["./src/openapi/zod"],
+      "@openapi/*": ["./src/openapi/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "build", "src/public"]
+}
