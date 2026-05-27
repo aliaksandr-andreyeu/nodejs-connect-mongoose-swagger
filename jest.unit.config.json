@@ -1,0 +1,21 @@
+{
+  "verbose": true,
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "setupFiles": ["<rootDir>/src/test/setup.ts"],
+  "coverageDirectory": "<rootDir>/coverage/unit",
+  "testPathIgnorePatterns": ["/node_modules/", "/build/", "/src/__tests__/e2e/"],
+  "moduleNameMapper": {
+    "^@app(.*)$": "<rootDir>/src/app$1",
+    "^@db(.*)$": "<rootDir>/src/db$1",
+    "^@constants(.*)$": "<rootDir>/src/constants$1",
+    "^@helpers(.*)$": "<rootDir>/src/helpers$1",
+    "^@models(.*)$": "<rootDir>/src/models$1",
+    "^@routes(.*)$": "<rootDir>/src/routes$1",
+    "^@middlewares(.*)$": "<rootDir>/src/middlewares$1",
+    "^@types(.*)$": "<rootDir>/src/types$1",
+    "^@validation(.*)$": "<rootDir>/src/validation$1",
+    "^@openapi/zod$": "<rootDir>/src/openapi/zod",
+    "^@openapi(.*)$": "<rootDir>/src/openapi$1"
+  }
+}
