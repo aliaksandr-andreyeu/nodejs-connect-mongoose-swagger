@@ -1,6 +1,6 @@
 # Node.js REST API example
 
-Node.js REST API boilerplate with Connect, Mongoose, Swagger
+Node.js REST API boilerplate with Connect, Redis, Mongoose, Swagger
 
 > This is the example of the Node.js REST API backend for related [React.js Web](https://github.com/aliaksandr-andreyeu/reactjs-rtk-dashboard) & [React Native Mobile](https://github.com/aliaksandr-andreyeu/react-native-mobx-firebase) applications.
 
