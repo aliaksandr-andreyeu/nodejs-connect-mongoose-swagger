@@ -6,16 +6,31 @@ Node.js REST API boilerplate with Connect, Mongoose, Swagger
 
 ## Configuration
 
-### Set up a MongoDB database:
+### MongoDB with Docker Compose (recommended for local dev)
 
-Set up a MongoDB database either locally or with MongoDB Atlas.
+Data is stored in [`./data/mongodb`](./data/mongodb) on the host (mapped to `/data/db` in the container).
 
-- [MongoDB Atlas](https://mongodb.com/atlas)
+```bash
+# Start MongoDB
+npm run docker:up
+
+# Copy env template and adjust if needed
+cp .env.example .env.development
+```
+
+Stop the database: `npm run docker:down`. Logs: `npm run docker:logs`.
+
+On first start, an `app` user and `app` database are created (see [`docker/mongo-init`](./docker/mongo-init)). To re-run initialization, remove the data directory: `rm -rf data/mongodb/*` (keep `.gitkeep`).
+
+### Set up a MongoDB database manually
+
+Alternatively, use a local MongoDB install or [MongoDB Atlas](https://mongodb.com/atlas).
+
 - [MongoDB Documentation](https://docs.mongodb.com/)
 
 ### Set up environment variables:
 
-Set MongoDB variables in [.env.development](https://github.com/aliaksandr-andreyeu/nodejs-connect-mongoose-swagger/blob/main/src/environments/.env.development):
+Set variables in `.env.development` (see [`.env.example`](./.env.example)):
 
 - `DB_HOST` - Database host name
 - `DB_PORT` - Database port number
@@ -33,8 +48,21 @@ npm run start:dev
 
 ## Requirements
 
-- `Node.js` >= v16.13.0
+- `Node.js` >= v18
 - `MongoDB` >= v3.6
+- TypeScript sources in `src/`, production build in `build/`
+
+### Scripts
+
+- `npm run start:dev` — single process, no cluster (easier debugging)
+- `npm run start:prod` — cluster mode in production (`cpus - 1` workers, min 1)
+- `npm run build:prod` — compile TypeScript and copy static Swagger assets
+- `npm run typecheck` — type-check without emit
+- `npm run openapi:generate` — regenerate `src/public/swagger.json` from Zod schemas (`@asteasolutions/zod-to-openapi`)
+
+OpenAPI and request validation share the same Zod schemas in `src/validation/`. Path definitions live in `src/openapi/paths/`.
+
+Git hooks: after `npm install`, Husky runs via the `prepare` script. The pre-commit hook is in [`.husky/pre-commit`](./.husky/pre-commit).
 
 ## Licensing
 

@@ -3,4 +3,4 @@
 coverage/
 node_modules/
 build/
-src/public/js/
+src/public/
