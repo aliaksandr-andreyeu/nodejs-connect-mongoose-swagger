@@ -1,0 +1,33 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: nodejs-connect-mongoose-swagger-mongodb
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: app
+    volumes:
+      - ./data/mongodb:/data/db
+      - ./docker/mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "-u",
+          "app",
+          "-p",
+          "appsecret",
+          "--authenticationDatabase",
+          "app",
+          "--quiet",
+          "--eval",
+          "db.adminCommand('ping').ok"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s

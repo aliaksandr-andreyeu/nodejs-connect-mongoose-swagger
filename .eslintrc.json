@@ -1,15 +1,18 @@
 {
   "root": true,
   "env": {
-    "browser": true,
     "node": true,
     "jest": true
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended", "prettier"],
-  "parser": "@babel/eslint-parser",
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended", "prettier"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaFeatures": {}
+    "project": "./tsconfig.json",
+    "sourceType": "module"
   },
-  "plugins": ["prettier"],
-  "rules": {}
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off"
+  },
+  "ignorePatterns": ["build", "node_modules", "src/public"]
 }
