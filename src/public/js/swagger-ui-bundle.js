@@ -41608,7 +41608,7 @@
                 const i = s.keys(),
                   a = new Set(i);
                 if (i.length !== a.size)
-                  throw new qp(`Object key "${o}" is not unique — JSON Pointer requires unique member names`, {
+                  throw new qp(`Object key "${o}" is not unique - JSON Pointer requires unique member names`, {
                     referenceToken: o,
                     currentValue: s,
                     realm: this.name
@@ -59397,9 +59397,9 @@
                             .replace(/([?!])…/g, '$1..')
                             .replace(/([?!]){4,}/g, '$1$1$1')
                             .replace(/,{2,}/g, ',')
-                            .replace(/(^|[^-])---([^-]|$)/gm, '$1—$2')
-                            .replace(/(^|\s)--(\s|$)/gm, '$1–$2')
-                            .replace(/(^|[^-\s])--([^-\s]|$)/gm, '$1–$2')),
+                            .replace(/(^|[^-])---([^-]|$)/gm, '$1-$2')
+                            .replace(/(^|\s)--(\s|$)/gm, '$1-$2')
+                            .replace(/(^|[^-\s])--([^-\s]|$)/gm, '$1-$2')),
                         (i.content = a));
             }
           ],
