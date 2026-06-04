@@ -80,7 +80,7 @@ jobs:
     steps:
       - run: |
           FAILED=""
-          # Проверяем каждый нужный джоб
+          # Check each required job
           if [[ "${{ needs.lint.result }}" != "success" ]]; then
             FAILED+="lint "
           fi
