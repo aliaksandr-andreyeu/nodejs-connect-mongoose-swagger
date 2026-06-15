@@ -21,6 +21,15 @@ export const resetPasswordSchema = z
   })
   .openapi('ResetPasswordInput');
 
+export const resetPasswordConfirmSchema = z
+  .object({
+    username: usernameField,
+    token: z.string().min(1),
+    newpassword: passwordField
+  })
+  .openapi('ResetPasswordConfirmInput');
+
 export type SignInInput = z.infer<typeof signInSchema>;
 export type SignUpInput = z.infer<typeof signUpSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type ResetPasswordConfirmInput = z.infer<typeof resetPasswordConfirmSchema>;

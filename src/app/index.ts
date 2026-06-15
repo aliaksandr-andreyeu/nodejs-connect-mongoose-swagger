@@ -6,7 +6,16 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import router from './router';
-import { authRateLimit, bodyParser, errorsHandler, responseDelay, swagger, xssSanitize } from '@middlewares';
+import {
+  authRateLimit,
+  bodyParser,
+  errorsHandler,
+  health,
+  notFound,
+  responseDelay,
+  swagger,
+  xssSanitize
+} from '@middlewares';
 import { users, auth, account } from '@routes';
 import { config } from '@constants';
 import { logger } from '../logger';
@@ -52,6 +61,9 @@ const app = () => {
     }) as unknown as NextHandleFunction
   );
 
+  // Health/readiness probes: cheap, no body parsing or artificial delay.
+  server.use(health);
+
   server.use(responseDelay);
   server.use(cookieParser() as unknown as NextHandleFunction);
   server.use(bodyParser);
@@ -63,6 +75,7 @@ const app = () => {
   server.use(router(account));
 
   server.use(swagger);
+  server.use(notFound);
   server.use(errorsHandler);
 
   return server;

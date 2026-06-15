@@ -6,7 +6,7 @@ import { getRedisClient } from '@db/redis';
 import type { AppRequest, AppResponse } from '@types';
 import { logger } from '../../logger';
 
-const AUTH_PATHS = new Set(['/signin', '/signup', '/reset-password']);
+const AUTH_PATHS = new Set(['/signin', '/signup', '/reset-password', '/reset-password/confirm']);
 
 let limiter: RateLimiterRedis | null = null;
 
@@ -24,9 +24,13 @@ export const initAuthRateLimiter = (): void => {
 };
 
 const getClientIp = (req: AppRequest): string => {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0].trim();
+  // Only trust X-Forwarded-For behind a known proxy (TRUST_PROXY=true); otherwise
+  // a client could spoof the header to dodge the per-IP rate limit.
+  if (config.trustProxy) {
+    const forwarded = req.headers['x-forwarded-for'];
+    if (typeof forwarded === 'string' && forwarded.length > 0) {
+      return forwarded.split(',')[0].trim();
+    }
   }
   return req.socket?.remoteAddress || 'unknown';
 };

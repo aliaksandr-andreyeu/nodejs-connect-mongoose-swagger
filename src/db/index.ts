@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
+import { userModel } from '@models';
 import { logger } from '../logger';
 
-let sigintRegistered = false;
-
 const db = {
-  connect: async (url: string, cb?: () => void): Promise<void> => {
+  connect: async (url: string): Promise<void> => {
     mongoose.set('debug', process.env.NODE_ENV === 'development');
 
     const mConnect = mongoose.connection;
@@ -29,22 +28,15 @@ const db = {
         logger.error({ err }, 'MongoDB connection error');
       });
 
-    if (!sigintRegistered) {
-      sigintRegistered = true;
-      process.on('SIGINT', () => {
-        void mConnect.close().then(() => {
-          logger.info('MongoDB connection closed (SIGINT)');
-          process.exit(0);
-        });
-      });
-    }
-
     try {
       await mongoose.connect(url, { bufferCommands: false });
-
       logger.info('MongoDB connection opened');
-      if (cb) {
-        cb();
+
+      // Ensure declared indexes (e.g. unique username) exist. autoIndex is off
+      // in production, so build them explicitly once at startup.
+      if (process.env.NODE_ENV === 'production') {
+        await userModel.syncIndexes();
+        logger.info('MongoDB indexes synced');
       }
     } catch (error) {
       const err = error as Error;
@@ -52,6 +44,10 @@ const db = {
 
       process.exit(1);
     }
+  },
+
+  disconnect: async (): Promise<void> => {
+    await mongoose.connection.close();
   }
 };
 

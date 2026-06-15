@@ -3,10 +3,19 @@ import { NextFunction } from 'connect';
 
 export interface AppError extends Error {
   code?: number;
+  // Marks an intentional, client-safe error (set by userError). Errors without
+  // this flag are treated as internal 5xx and their message is not exposed.
+  expose?: boolean;
 }
 
 export interface RequestParams {
   [key: string]: string;
+}
+
+export interface AppAuth {
+  userId: string;
+  email: string;
+  refreshJti: string;
 }
 
 export interface AppRequest extends IncomingMessage {
@@ -14,11 +23,7 @@ export interface AppRequest extends IncomingMessage {
   params?: RequestParams;
   query?: Record<string, string>;
   cookies?: Record<string, string>;
-  auth?: {
-    userId: string;
-    email: string;
-    refreshJti: string;
-  };
+  auth?: AppAuth;
 }
 
 export type AppResponse = ServerResponse;
@@ -48,10 +53,17 @@ export type RouteMethods = Partial<Record<string, RouteMethodConfig>>;
 
 export type RoutesMap = Record<string, RouteMethods>;
 
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+}
+
 export interface ApiResponseBody<T = unknown> {
   data?: T;
   isOk: boolean;
   message: string | null;
+  pagination?: Pagination;
 }
 
 export interface ServiceResult<T = unknown> {

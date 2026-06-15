@@ -6,7 +6,8 @@ const userSchema = new Schema(
       type: String,
       trim: true,
       required: true,
-      default: ''
+      unique: true,
+      index: true
     },
     name: {
       type: String,
@@ -36,16 +37,6 @@ const userSchema = new Schema(
       trim: true,
       default: ''
     },
-    token: {
-      type: String,
-      trim: true,
-      default: ''
-    },
-    accessToken: {
-      type: String,
-      trim: true,
-      default: ''
-    },
     refreshToken: {
       type: String,
       trim: true,
@@ -59,16 +50,13 @@ const userSchema = new Schema(
     resetPasswordExpires: {
       type: Date,
       default: null
-    },
-    expiresIn: {
-      type: String,
-      trim: true,
-      default: ''
     }
   },
   {
     timestamps: true,
-    autoIndex: false,
+    // Build indexes automatically outside production; in production run
+    // `userModel.syncIndexes()` (done on startup) to avoid blocking writes.
+    autoIndex: process.env.NODE_ENV !== 'production',
     toObject: {
       virtuals: true,
       getters: true
@@ -100,12 +88,9 @@ export interface User {
   job: string;
   isActive: boolean;
   password: string;
-  token: string;
-  accessToken: string;
   refreshToken: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date | null;
-  expiresIn: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

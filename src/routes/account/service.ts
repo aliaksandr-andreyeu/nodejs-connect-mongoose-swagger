@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 
-import { userError, getResponse } from '@helpers';
+import { userError, getResponse, getAuth, hashPassword, isDuplicateKeyError } from '@helpers';
 import { apiErrors } from '@constants';
+import { invalidateUser } from '@db/cache';
 import { userModel } from '@models';
 import { changePasswordSchema, contactUsSchema, userAccountSchema, validateRequestBody } from '@validation';
 import type { AppRequest } from '@types';
@@ -9,21 +10,17 @@ import type { AppRequest } from '@types';
 const contactUs = async (req: AppRequest) => {
   await validateRequestBody(contactUsSchema, req.body);
 
-  if (!req.auth?.userId) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
+  getAuth(req);
 
   return getResponse();
 };
 
 const getAccount = async (req: AppRequest) => {
-  if (!req.auth?.userId || !req.auth.email) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
+  const { userId, email } = getAuth(req);
 
-  const user = await userModel.findById(req.auth.userId).exec();
+  const user = await userModel.findById(userId).exec();
 
-  if (!(user && user.username && user.username === req.auth.email)) {
+  if (!(user && user.username && user.username === email)) {
     throw userError(apiErrors.user.notFound, 404);
   }
 
@@ -33,15 +30,24 @@ const getAccount = async (req: AppRequest) => {
 const editAccount = async (req: AppRequest) => {
   const validatedBody = await validateRequestBody(userAccountSchema, req.body);
 
-  if (!req.auth?.userId) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
+  const { userId } = getAuth(req);
 
-  const user = await userModel.findByIdAndUpdate(req.auth.userId, validatedBody, { new: true }).exec();
+  let user;
+  try {
+    user = await userModel.findByIdAndUpdate(userId, validatedBody, { new: true, runValidators: true }).exec();
+  } catch (error) {
+    if (isDuplicateKeyError(error)) {
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
+    }
+    throw error;
+  }
 
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
+
+  // Username may have changed — drop the cached projection.
+  await invalidateUser(userId);
 
   return getResponse(user);
 };
@@ -49,13 +55,11 @@ const editAccount = async (req: AppRequest) => {
 const changePassword = async (req: AppRequest) => {
   const validatedBody = await validateRequestBody(changePasswordSchema, req.body);
 
-  if (!req.auth?.userId || !req.auth.email) {
-    throw userError(apiErrors.common.unauthorized, 401);
-  }
+  const { userId, email } = getAuth(req);
 
-  const user = await userModel.findById(req.auth.userId).exec();
+  const user = await userModel.findById(userId).exec();
 
-  if (!(user && user.username && user.username === req.auth.email)) {
+  if (!(user && user.username && user.username === email)) {
     throw userError(apiErrors.user.notFound, 404);
   }
 
@@ -73,15 +77,14 @@ const changePassword = async (req: AppRequest) => {
     throw userError(apiErrors.user.sameOldNewPassword, 400);
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(validatedBody.newpassword, salt);
+  const hash = await hashPassword(validatedBody.newpassword);
 
   const entity = {
-    username: req.auth.email,
+    username: email,
     password: hash
   };
 
-  const userUpdate = await userModel.findByIdAndUpdate(req.auth.userId, entity, { new: true }).exec();
+  const userUpdate = await userModel.findByIdAndUpdate(userId, entity, { new: true, runValidators: true }).exec();
 
   if (!userUpdate) {
     throw userError(apiErrors.user.notUpdated, 400);

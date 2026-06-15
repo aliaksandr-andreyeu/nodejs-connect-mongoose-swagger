@@ -1,6 +1,6 @@
 import { registry } from '../registry';
 import { authResponseBodySchema, emptyResponseBodySchema, jwtSecurity, standardErrorResponses } from '../components';
-import { resetPasswordSchema, signInSchema, signUpSchema } from '@validation';
+import { resetPasswordSchema, resetPasswordConfirmSchema, signInSchema, signUpSchema } from '@validation';
 
 registry.registerPath({
   method: 'post',
@@ -102,6 +102,33 @@ registry.registerPath({
       content: {
         'application/json': {
           schema: resetPasswordSchema
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: 'OK',
+      content: {
+        'application/json': {
+          schema: emptyResponseBodySchema
+        }
+      }
+    },
+    ...standardErrorResponses
+  }
+});
+
+registry.registerPath({
+  method: 'post',
+  path: '/reset-password/confirm',
+  tags: ['Auth'],
+  summary: 'Confirm password reset',
+  request: {
+    body: {
+      content: {
+        'application/json': {
+          schema: resetPasswordConfirmSchema
         }
       }
     }

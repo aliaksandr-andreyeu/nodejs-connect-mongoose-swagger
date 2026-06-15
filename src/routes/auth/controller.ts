@@ -53,6 +53,17 @@ export const resetPassword = async (req: AppRequest, res: AppResponse, next: App
   }
 };
 
+export const resetPasswordConfirm = async (req: AppRequest, res: AppResponse, next: AppNextFunction) => {
+  try {
+    const { response } = await authService.resetPasswordConfirm(req);
+
+    res.writeHead(200, httpStatusMessage[200], jsonHeader);
+    res.end(JSON.stringify(response), encoding);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const signOut = async (req: AppRequest, res: AppResponse, next: AppNextFunction) => {
   try {
     const { response } = await authService.signOut(req);

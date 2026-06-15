@@ -51,7 +51,10 @@
             "type": "string"
           }
         },
-        "required": ["message", "status"]
+        "required": [
+          "message",
+          "status"
+        ]
       },
       "User": {
         "type": "object",
@@ -78,7 +81,10 @@
             "type": "number"
           }
         },
-        "required": ["id", "username"]
+        "required": [
+          "id",
+          "username"
+        ]
       },
       "AuthData": {
         "type": "object",
@@ -90,7 +96,10 @@
             "$ref": "#/components/schemas/User"
           }
         },
-        "required": ["accessToken", "overview"]
+        "required": [
+          "accessToken",
+          "overview"
+        ]
       },
       "AuthResponseBody": {
         "type": "object",
@@ -106,7 +115,10 @@
             "$ref": "#/components/schemas/AuthData"
           }
         },
-        "required": ["isOk", "message"]
+        "required": [
+          "isOk",
+          "message"
+        ]
       },
       "UserResponseBody": {
         "type": "object",
@@ -122,7 +134,10 @@
             "$ref": "#/components/schemas/User"
           }
         },
-        "required": ["isOk", "message"]
+        "required": [
+          "isOk",
+          "message"
+        ]
       },
       "UsersListResponseBody": {
         "type": "object",
@@ -141,7 +156,10 @@
             }
           }
         },
-        "required": ["isOk", "message"]
+        "required": [
+          "isOk",
+          "message"
+        ]
       },
       "EmptyResponseBody": {
         "type": "object",
@@ -157,7 +175,10 @@
             "nullable": true
           }
         },
-        "required": ["isOk", "message"]
+        "required": [
+          "isOk",
+          "message"
+        ]
       },
       "UserIdPathParams": {
         "type": "object",
@@ -167,7 +188,9 @@
             "description": "User ID"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "SignInInput": {
         "type": "object",
@@ -183,7 +206,10 @@
             "pattern": "[a-z]"
           }
         },
-        "required": ["username", "password"]
+        "required": [
+          "username",
+          "password"
+        ]
       },
       "SignUpInput": {
         "type": "object",
@@ -199,7 +225,10 @@
             "pattern": "[a-z]"
           }
         },
-        "required": ["username", "password"]
+        "required": [
+          "username",
+          "password"
+        ]
       },
       "ResetPasswordInput": {
         "type": "object",
@@ -209,7 +238,33 @@
             "minLength": 1
           }
         },
-        "required": ["username"]
+        "required": [
+          "username"
+        ]
+      },
+      "ResetPasswordConfirmInput": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1
+          },
+          "token": {
+            "type": "string",
+            "minLength": 1
+          },
+          "newpassword": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 256,
+            "pattern": "[a-z]"
+          }
+        },
+        "required": [
+          "username",
+          "token",
+          "newpassword"
+        ]
       },
       "ContactUsInput": {
         "type": "object",
@@ -223,7 +278,10 @@
             "minLength": 1
           }
         },
-        "required": ["subject", "message"]
+        "required": [
+          "subject",
+          "message"
+        ]
       },
       "UserAccountInput": {
         "type": "object",
@@ -245,7 +303,9 @@
             "type": "string"
           }
         },
-        "required": ["username"]
+        "required": [
+          "username"
+        ]
       },
       "ChangePasswordInput": {
         "type": "object",
@@ -269,7 +329,11 @@
             "pattern": "[a-z]"
           }
         },
-        "required": ["password", "newpassword", "confirm"]
+        "required": [
+          "password",
+          "newpassword",
+          "confirm"
+        ]
       },
       "UserProfileInput": {
         "type": "object",
@@ -300,7 +364,9 @@
             "pattern": "[a-z]"
           }
         },
-        "required": ["username"]
+        "required": [
+          "username"
+        ]
       }
     },
     "parameters": {}
@@ -308,7 +374,9 @@
   "paths": {
     "/signin": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Sign in",
         "requestBody": {
           "content": {
@@ -383,7 +451,9 @@
     },
     "/signup": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Sign up",
         "requestBody": {
           "content": {
@@ -458,7 +528,9 @@
     },
     "/refresh-token": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Refresh access token",
         "responses": {
           "200": {
@@ -524,7 +596,9 @@
     },
     "/reset-password": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Reset password",
         "requestBody": {
           "content": {
@@ -589,9 +663,80 @@
         }
       }
     },
+    "/reset-password/confirm": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Confirm password reset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordConfirmInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmptyResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/signout": {
       "get": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "summary": "Sign out",
         "security": [
           {
@@ -663,7 +808,9 @@
     },
     "/contact": {
       "post": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "summary": "Contact us",
         "security": [
           {
@@ -736,7 +883,9 @@
     },
     "/account": {
       "get": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "summary": "Get current account",
         "security": [
           {
@@ -798,7 +947,9 @@
         }
       },
       "put": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "summary": "Update current account",
         "security": [
           {
@@ -871,7 +1022,9 @@
     },
     "/change-password": {
       "post": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "summary": "Change password",
         "security": [
           {
@@ -944,7 +1097,9 @@
     },
     "/users": {
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "List users",
         "security": [
           {
@@ -1006,7 +1161,9 @@
         }
       },
       "post": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Create user",
         "security": [
           {
@@ -1079,7 +1236,9 @@
     },
     "/users/{id}": {
       "put": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Replace user by id",
         "security": [
           {
@@ -1161,7 +1320,9 @@
         }
       },
       "patch": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Update user by id",
         "security": [
           {
@@ -1243,7 +1404,9 @@
         }
       },
       "delete": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Delete user by id",
         "security": [
           {
@@ -1316,7 +1479,9 @@
         }
       },
       "get": {
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "summary": "Get user by id",
         "security": [
           {

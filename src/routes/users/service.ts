@@ -1,17 +1,43 @@
-import bcrypt from 'bcrypt';
-import { getRequestParamsId, isValidObjectId, userError, getResponse } from '@helpers';
+import {
+  getRequestParamsId,
+  isValidObjectId,
+  isDuplicateKeyError,
+  hashPassword,
+  userError,
+  getResponse
+} from '@helpers';
+import { invalidateUser } from '@db/cache';
 import { apiErrors } from '@constants';
 import { userModel } from '@models';
 import { userProfileSchema, validateRequestBody } from '@validation';
 import type { AppRequest } from '@types';
 
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+const getPagination = (req: AppRequest): { page: number; limit: number; skip: number } => {
+  const rawPage = Number(req.query?.page);
+  const rawLimit = Number(req.query?.limit);
+
+  const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
+  const limit =
+    Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(Math.floor(rawLimit), MAX_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
+
+  return { page, limit, skip: (page - 1) * limit };
+};
+
 const get = async (req: AppRequest) => {
   const id = getRequestParamsId(req);
 
   if (!id) {
-    const users = await userModel.find({}).exec();
+    const { page, limit, skip } = getPagination(req);
 
-    return getResponse(users);
+    const [users, total] = await Promise.all([
+      userModel.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit).exec(),
+      userModel.estimatedDocumentCount()
+    ]);
+
+    return getResponse(users, {}, true, null, { pagination: { page, limit, total } });
   }
 
   if (!isValidObjectId(id)) {
@@ -30,23 +56,21 @@ const get = async (req: AppRequest) => {
 const create = async (req: AppRequest) => {
   const validatedBody = await validateRequestBody(userProfileSchema, req.body);
 
-  const userExist = await userModel.findOne({ username: validatedBody.username });
-
-  if (userExist) {
-    throw userError(apiErrors.user.exists(validatedBody.username), 400);
-  }
-
   const entity: Record<string, unknown> = { ...validatedBody };
   if (validatedBody.password) {
-    const salt = await bcrypt.genSalt(10);
-    entity.password = await bcrypt.hash(validatedBody.password, salt);
+    entity.password = await hashPassword(validatedBody.password);
   }
 
-  const model = new userModel(entity);
-
-  const newUser = await model.save();
-
-  return getResponse(newUser);
+  try {
+    const newUser = await new userModel(entity).save();
+    return getResponse(newUser);
+  } catch (error) {
+    // Unique index on `username` guards against the find-then-create race.
+    if (isDuplicateKeyError(error)) {
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
+    }
+    throw error;
+  }
 };
 
 const modify = async (req: AppRequest) => {
@@ -71,11 +95,21 @@ const modify = async (req: AppRequest) => {
     job: validatedBody.job || ''
   };
 
-  const user = await userModel.findByIdAndUpdate(id, entity, { new: true }).exec();
+  let user;
+  try {
+    user = await userModel.findByIdAndUpdate(id, entity, { new: true, runValidators: true }).exec();
+  } catch (error) {
+    if (isDuplicateKeyError(error)) {
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
+    }
+    throw error;
+  }
 
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
+
+  await invalidateUser(id);
 
   return getResponse(user);
 };
@@ -89,11 +123,21 @@ const update = async (req: AppRequest) => {
 
   const validatedBody = await validateRequestBody(userProfileSchema, req.body);
 
-  const user = await userModel.findByIdAndUpdate(id, validatedBody, { new: true }).exec();
+  let user;
+  try {
+    user = await userModel.findByIdAndUpdate(id, validatedBody, { new: true, runValidators: true }).exec();
+  } catch (error) {
+    if (isDuplicateKeyError(error)) {
+      throw userError(apiErrors.user.exists(validatedBody.username), 400);
+    }
+    throw error;
+  }
 
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
+
+  await invalidateUser(id);
 
   return getResponse(user);
 };
@@ -114,6 +158,8 @@ const remove = async (req: AppRequest) => {
   if (!user) {
     throw userError(apiErrors.user.notFound, 404);
   }
+
+  await invalidateUser(id);
 
   return getResponse();
 };

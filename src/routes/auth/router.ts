@@ -1,4 +1,4 @@
-import { signIn, signUp, refreshToken, resetPassword, signOut } from './controller';
+import { signIn, signUp, refreshToken, resetPassword, resetPasswordConfirm, signOut } from './controller';
 import type { RoutesMap } from '@types';
 
 const auth: RoutesMap = {
@@ -20,6 +20,11 @@ const auth: RoutesMap = {
   '/reset-password': {
     POST: {
       handler: resetPassword
+    }
+  },
+  '/reset-password/confirm': {
+    POST: {
+      handler: resetPasswordConfirm
     }
   },
   '/signout': {
