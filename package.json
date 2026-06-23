@@ -93,7 +93,7 @@
     "prettier": "^2.8.3",
     "rimraf": "^4.1.2",
     "supertest": "^7.1.4",
-    "swagger-ui-dist": "^5.32.6",
+    "swagger-ui-dist": "^5.32.8",
     "ts-jest": "^29.2.6",
     "tsc-alias": "^1.8.11",
     "tsx": "^4.19.3",
