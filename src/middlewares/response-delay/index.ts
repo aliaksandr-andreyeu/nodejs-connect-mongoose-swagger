@@ -4,15 +4,13 @@ import type { AppNextFunction, AppRequest, AppResponse } from '@types';
 const { responseTimeout } = config;
 
 const responseDelay = (req: AppRequest, res: AppResponse, next: AppNextFunction) => {
-  let timer: NodeJS.Timeout | null = null;
-
-  if (timer) {
-    clearTimeout(timer);
+  // No artificial delay configured — pass through synchronously.
+  if (!responseTimeout || responseTimeout <= 0) {
+    next();
+    return;
   }
 
-  timer = setTimeout(() => {
-    next();
-  }, responseTimeout);
+  setTimeout(next, responseTimeout);
 };
 
 export default responseDelay;

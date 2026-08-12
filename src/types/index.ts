@@ -1,4 +1,5 @@
 export type {
+  AppAuth,
   AppError,
   AppNextFunction,
   AppRequest,
@@ -6,6 +7,7 @@ export type {
   ApiResponseBody,
   JwtAccessPayload,
   JwtRefreshPayload,
+  Pagination,
   RequestHandler,
   RequestParams,
   RouteMethodConfig,

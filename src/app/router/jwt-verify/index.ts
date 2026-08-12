@@ -8,6 +8,7 @@ import {
   getRefreshToken
 } from '@helpers';
 import { userModel } from '@models';
+import { getCachedUser, cacheUser, type CachedUser } from '@db/cache';
 import type { AppNextFunction, AppRequest, AppResponse, RequestHandler } from '@types';
 
 const jwtVerify = async (handler: RequestHandler, req: AppRequest, res: AppResponse, next: AppNextFunction) => {
@@ -37,13 +38,21 @@ const jwtVerify = async (handler: RequestHandler, req: AppRequest, res: AppRespo
       throw userError(apiErrors.common.unauthorized, 401);
     }
 
-    const user = await userModel.findById(jwtAccessData.id).exec();
+    // Try the Redis cache first; fall back to Mongo and populate on miss.
+    let cached: CachedUser | null = await getCachedUser(jwtAccessData.id);
+    if (!cached) {
+      const user = await userModel.findById(jwtAccessData.id).exec();
+      if (user && user.username) {
+        cached = { username: user.username, refreshToken: user.refreshToken };
+        await cacheUser(jwtAccessData.id, cached);
+      }
+    }
 
-    if (!(user && user.username && user.username === jwtAccessData.email)) {
+    if (!(cached && cached.username && cached.username === jwtAccessData.email)) {
       throw userError(apiErrors.common.unauthorized, 401);
     }
     // Server-side refresh token revoke: require current refresh jti match.
-    if (!jwtRefreshData.jti || user.refreshToken !== jwtRefreshData.jti) {
+    if (!jwtRefreshData.jti || cached.refreshToken !== jwtRefreshData.jti) {
       throw userError(apiErrors.common.unauthorized, 401);
     }
 

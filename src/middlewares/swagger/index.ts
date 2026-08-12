@@ -3,60 +3,58 @@ import path from 'path';
 import url from 'url';
 import mime from 'mime-types';
 
-import { httpStatusMessage } from '@constants';
-import type { AppRequest, AppResponse } from '@types';
+import type { AppNextFunction, AppRequest, AppResponse } from '@types';
 
-const notFound = (res: AppResponse) => {
-  res.writeHead(404, httpStatusMessage[404]);
-  res.end();
+const PUBLIC_ROOT = path.join(__dirname, '../../public');
+
+// Resolve a request path to a file strictly inside PUBLIC_ROOT. Decodes the
+// path, normalizes `..`/`.` segments, and rejects anything that escapes the
+// public directory (path-traversal guard).
+const resolvePublicFile = (pathname: string): string | null => {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+
+  const relative = decoded === '/' ? 'index.html' : decoded.replace(/^\/+/, '');
+  const resolved = path.normalize(path.join(PUBLIC_ROOT, relative));
+
+  if (resolved !== PUBLIC_ROOT && !resolved.startsWith(PUBLIC_ROOT + path.sep)) {
+    return null;
+  }
+
+  return resolved;
 };
 
-const getFilePath = (filePath: string | false): string | false => {
-  if (!filePath) return false;
-  return path.join(__dirname, '../../', filePath);
-};
-
-const swagger = (req: AppRequest, res: AppResponse) => {
-  if (!['GET'].includes(req.method || '')) {
-    notFound(res);
+const swagger = (req: AppRequest, res: AppResponse, next: AppNextFunction) => {
+  // Only GET serves static assets; everything else falls through to the 404.
+  if (req.method !== 'GET') {
+    next();
     return;
   }
 
   const pathname = url.parse(req.url || '').pathname || '/';
+  const resolvedPath = resolvePublicFile(pathname);
 
-  let filePath: string | false = false;
-
-  if (pathname === '/') {
-    filePath = './public/index.html';
-  } else {
-    filePath = './public' + pathname;
-  }
-
-  const resolvedPath = getFilePath(filePath);
   if (!resolvedPath) {
-    notFound(res);
+    next();
     return;
   }
 
-  fs.exists(resolvedPath, (hasFile) => {
-    if (!hasFile) {
-      notFound(res);
+  fs.readFile(resolvedPath, (err, data) => {
+    if (err) {
+      next();
       return;
     }
 
-    fs.readFile(resolvedPath, (err, data) => {
-      if (err) {
-        notFound(res);
-        return;
-      }
+    const contentType = mime.lookup(path.basename(resolvedPath)) || 'application/octet-stream';
 
-      const contentType = mime.lookup(path.basename(resolvedPath)) || 'application/octet-stream';
-
-      res.writeHead(200, {
-        'Content-Type': `${contentType}; charset=utf-8`
-      });
-      res.end(data);
+    res.writeHead(200, {
+      'Content-Type': `${contentType}; charset=utf-8`
     });
+    res.end(data);
   });
 };
 

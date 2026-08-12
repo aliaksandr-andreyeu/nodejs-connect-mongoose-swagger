@@ -3,8 +3,8 @@ import { isObject } from './utils';
 import {
   getRequestParamsId,
   userError,
-  validatePassword,
-  validateEmail,
+  getAuth,
+  hashPassword,
   generateTokens,
   getResponse,
   getCookieHeader,
@@ -14,17 +14,18 @@ import {
   getRefreshToken
 } from './http-utils';
 
-import { isValidObjectId } from './db-utils';
+import { isValidObjectId, isDuplicateKeyError } from './db-utils';
 import { getErrorMessage, getErrorStatusCode } from './errors';
 
 export {
   getErrorMessage,
   getErrorStatusCode,
   isValidObjectId,
+  isDuplicateKeyError,
   getRequestParamsId,
   userError,
-  validatePassword,
-  validateEmail,
+  getAuth,
+  hashPassword,
   generateTokens,
   getResponse,
   getCookieHeader,

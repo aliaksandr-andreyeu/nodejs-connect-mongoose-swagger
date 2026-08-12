@@ -19,3 +19,8 @@ export const isValidObjectId = (id: unknown): boolean => {
 
   return objectId === stringId;
 };
+
+// MongoDB duplicate-key error (e.g. unique index violation on `username`).
+export const isDuplicateKeyError = (err: unknown): boolean => {
+  return Boolean(err && typeof err === 'object' && (err as { code?: number }).code === 11000);
+};
