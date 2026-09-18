@@ -42,7 +42,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.0",
     "bcrypt": "^5.1.0",
-    "compression": "^1.7.4",
+    "compression": "^1.8.2",
     "connect": "^3.7.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
